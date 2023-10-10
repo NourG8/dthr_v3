@@ -9,6 +9,11 @@ import '@layouts/styles/index.scss'
 import '@styles/styles.scss'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
+// import Draggable from 'vue-draggable-next'
+import VOtpInput from "vue3-otp-input"
+import VueTelInput from 'vue3-tel-input'
+import 'vue3-tel-input/dist/vue3-tel-input.css'
+
 
 loadFonts()
 
@@ -19,6 +24,10 @@ const app = createApp(App)
 app.use(vuetify)
 app.use(createPinia())
 app.use(router)
+app.use(VueTelInput);
+// app.use(Draggable);*
+// app.component('draggable', Draggable)
+app.component('v-otp-input', VOtpInput)
 
 // Mount vue app
 app.mount('#app')
