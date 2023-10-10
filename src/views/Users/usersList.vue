@@ -2,7 +2,7 @@
 import DataTable from '@/components/dataTable/DataTable.vue';
 import { useUser } from '@/stores/user';
 import userDetails from '@/views/Users/components/userDetails.vue';
-
+import userEdit from '@/views/Users/components/userEdit.vue';
 // const notyf = useNotyf()
 
 // Store
@@ -55,14 +55,25 @@ const editedItem = ref<any>({
 })
 
 const dialogDetails = ref(false)
+const dialogEdit = ref(false)
 
 function closeDetails() {
     dialogDetails.value = false
 }
 
+function closeUpdate() {
+    dialogEdit.value = false
+}
+
 function detailsUser(item : any){
     editedItem.value = Object.assign({}, item)
     dialogDetails.value = true 
+    console.log(editedItem.value)
+}
+
+function updateUser(item : any){
+    editedItem.value = Object.assign({}, item)
+    dialogEdit.value = true 
     console.log(editedItem.value)
 }
 
@@ -82,6 +93,26 @@ function detailsUser(item : any){
                       <span></span>
                       <v-spacer></v-spacer>
                       <v-btn color="primary" outlined class="mt-4" type="reset" @click="closeDetails()">
+                        Cancel
+                      </v-btn>
+                    </v-card-actions>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+
+          <v-dialog v-model="dialogEdit" max-width="1500px">
+            <v-card flat class="pa-3 mt-2">
+              <v-card-title class="text-h5 mb-5"> Update User ({{ editedItem.lastName }} {{ editedItem.firstName }})</v-card-title>
+              <v-card-text>
+                <userEdit :data="editedItem"></userEdit>
+                <v-row>
+                  <v-col cols="12">
+                    <v-card-actions>
+                      <span></span>
+                      <v-spacer></v-spacer>
+                      <v-btn color="primary" outlined class="mt-4" type="reset" @click="closeUpdate()">
                         Cancel
                       </v-btn>
                     </v-card-actions>

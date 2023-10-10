@@ -32,7 +32,6 @@
     'levelStudies',
     'carteId',
     'regimeSocial',
-   
   ];
 
   function formatDate(date: any) {
