@@ -1,5 +1,20 @@
 <script setup lang="ts">
+import { dateMaxValidator, dateMin18Validator, lengthValidator, requiredValidator } from '@/@core/utils/validators';
+import { useCompany } from '@/stores/company';
+import { useDepartment } from '@/stores/department';
+import { usePosition } from '@/stores/position';
 import Draggable from 'vuedraggable';
+
+// Store position
+const { get_positions } = usePosition()
+const { positions_list, loading } = storeToRefs(usePosition())
+// Store department
+const { get_departments, get_teams_department } = useDepartment()
+const { departments_list, team_list } = storeToRefs(useDepartment())
+
+// Store company
+const { get_companies } = useCompany()
+const { companies_list } = storeToRefs(useCompany())
 
 interface Props {
   data: any;
@@ -7,10 +22,29 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {});
 
-onMounted(() => {
-  console.log(props.data)
+onMounted(async () => {
+  // console.log("data : ",props.data)
+  get_positions()
+  // console.log("position : ",positions_list.value)
+  get_departments()
+  // console.log("department : ",departments_list.value)
+  updateTeamList()
+
+  await get_companies()
+  await getRegimeSocial()
+
   getCINArray()
-})
+});
+
+const company = ref()
+const regimeSocialOptions = ref([]);
+const nationality = ref()
+async function getRegimeSocial() {
+  company.value = JSON.parse(localStorage.getItem('companyData'));
+  nationality.value = company.value.nationality;
+  console.log(nationality.value)
+  regimeSocialOptions.value = JSON.parse(company.value.regimeSocial)
+}
 
 function getCINArray() {
   if (props.data.cin) {
@@ -23,6 +57,11 @@ function getCINArray() {
 
 const shipping = ref(0)
 const step = ref(1)
+
+const upd = ref(0)
+function updateNationality() {
+  upd.value = 1
+}
 
 const steps = ref([
   { number: 1, name: 'Generale' },
@@ -96,16 +135,43 @@ function checkMove(e) {
   replacedItem.id = tempId;
 }
 
+function isCardIdRequired(){
+  console.log("nat insert",props.data.nationality)
+  console.log("company nat",nationality.value)
+  return props.data.nationality !== nationality.value
+}
+const department= ref(props.data.department_id)
+const team = ref(props.data.position_id)
+
+function updateTeamList() {
+  if (props.data.department_id) {
+    get_teams_department(props.data.department_id);
+  }
+  if (props.data.department_id === department.value) {
+    props.data.position_id = team.value
+  } else {
+    props.data.position_id = null;
+  }
+}
+
+const isFormValid = ref(false);
 const currentStep = ref(0)
+
+watch(() => {
+  console.log(props.data)
+  updateTeamList()
+})
 
 function getAvatarColor(index) {
   return index === currentStep.value ? 'primary' : 'secondary';
 }
+
 function nextStep() {
-  if (currentStep.value < steps.value.length - 1) {
+  if (currentStep.value < steps.value.length - 1 && validateStep0()) {
     currentStep.value++;
   }
 }
+
 function previousStep() {
   if (currentStep.value > 0) {
     currentStep.value--;
@@ -118,7 +184,27 @@ const isDragging = ref(false)
 
 const departmentOptions = ['Département 1', 'Département 2', 'Département 3']; // Remplace avec tes options réelles
 const teamOptions = ['Équipe 1', 'Équipe 2', 'Équipe 3']; // Remplace avec tes options réelles
-const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace avec tes options réelles
+// const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace avec tes options réelles
+
+function validateStep0() {
+  // Logique de validation spécifique à la première étape
+  console.log((
+    requiredValidator(props.data.lastName) === true &&
+    lengthValidator(props.data.lastName, 15, 3) === true &&
+    requiredValidator(props.data.firstName) === true &&
+    lengthValidator(props.data.firstName, 15, 3) === true &&
+    requiredValidator(props.data.dateBirth) === true &&
+    dateMin18Validator(props.data.dateBirth) === true &&
+    dateMaxValidator(props.data.dateBirth) === true ))
+  return (
+    requiredValidator(props.data.lastName) === true &&
+    lengthValidator(props.data.lastName, 15, 3) === true &&
+    requiredValidator(props.data.firstName) === true &&
+    lengthValidator(props.data.firstName, 15, 3) === true &&
+    requiredValidator(props.data.dateBirth) === true &&
+    dateMin18Validator(props.data.dateBirth) === true &&
+    dateMaxValidator(props.data.dateBirth) === true )
+}
 
 </script>
 
@@ -139,22 +225,28 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
         <!-- Contenu de l'étape Generale -->
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.lastName" label="Nom"></v-text-field>
+            <v-text-field v-model="props.data.lastName" label="Nom" 
+            :rules="[requiredValidator, lengthValidator(props.data.lastName , 15,3)]"
+            ></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.firstName" label="Prénom"></v-text-field>
+            <v-text-field v-model="props.data.firstName" label="Prénom"
+            :rules="[requiredValidator, lengthValidator(props.data.lastName , 15,3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.dateBirth" label="Date de naissance"></v-text-field>
+            <v-text-field v-model="props.data.dateBirth" label="Date de naissance" type="date"
+            :rules="[requiredValidator, dateMin18Validator, dateMaxValidator(props.data.dateBirth) ]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.placeBirth" label="Lieu de naissance"></v-text-field>
+            <v-text-field v-model="props.data.placeBirth" label="Lieu de naissance" 
+            :rules="[requiredValidator, lengthValidator(props.data.placeBirth , 15,3)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-select v-model="props.data.sex" :items="sexOptions" label="Sexe"></v-select>
+            <v-select v-model="props.data.sex" :items="sexOptions" label="Sexe" 
+            :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
       </div>
@@ -177,7 +269,7 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
 
         <v-row>
           <v-col>
-            <vue-tel-input v-model="props.data.phone" class="custom-input"></vue-tel-input>
+            <vue-tel-input :value="props.data.phone" class="custom-input"></vue-tel-input>
           </v-col>
           <v-col>
             <vue-tel-input :value="props.data.phoneEmergency" class="custom-input"></vue-tel-input>
@@ -203,34 +295,47 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
       <div v-else-if="currentStep === 3">
         <!-- Contenu de l'étape Identity -->
         <v-row>
-          <v-col md="2">
+          <v-col cols="12" md="2">
             <v-icon start icon="mdi-passport"></v-icon> passport number
           </v-col>
-          <v-col md="5">
+          <v-col cols="12" md="5">
             <div style="display: flex; flex-direction: row">
               <v-otp-input ref="otpInput" :value="props.data.numPassport" input-classes="otp-input" separator="-"
-                :num-inputs="8"  input-type="letter-numeric" 
-                :conditionalClass="['one', 'two', 'three', 'four']"
+                :num-inputs="8" input-type="letter-numeric" :conditionalClass="['one', 'two', 'three', 'four']"
                 :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']" />
             </div>
           </v-col>
-          <v-col md="4">
-            <v-text-field v-model="props.data.nationality" label="Nationalité"></v-text-field>
+          <v-col cols="12" md="4">
+            <v-text-field v-model="props.data.nationality" @change="isCardIdRequired"  @click="isCardIdRequired" label="Nationalité" :disabled="upd == 0"></v-text-field>
+          </v-col>
+          <v-col cols="12" md="1">
+            <v-btn @click="updateNationality" outlined color="rgb(34 167 95)" class="ml-5 mt-2"
+              style="min-width: 10px !important">
+              <v-icon icon="mdi-pen" color="white"></v-icon>
+            </v-btn>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col md="2">
+        <v-row v-if="isCardIdRequired() === false">
+          <v-col cols="12" md="2" class="margin-title">
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> CIN
           </v-col>
-          <v-col md="5">
+          <v-col cols="12" md="5">
             <v-otp-input ref="otpInput" :value="props.data.cin" input-classes="otp-input" separator="-" :num-inputs="8"
-               input-type="numeric" :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']" />
+              input-type="numeric" :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']" />
           </v-col>
-          <v-col md="2">
+          <v-col cols="12" md="3">
             <v-text-field type="date" v-model="props.data.deliveryDateCin" label="Date de délivrance CIN"></v-text-field>
           </v-col>
-          <v-col md="2">
+          <v-col cols="12" md="2">
             <v-text-field v-model="props.data.deliveryPlaceCin" label="Lieu de délivrance CIN"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row cols="12" v-if="isCardIdRequired() === true">
+          <v-col md="2" class="margin-title">
+            <v-icon start icon="mdi-card-account-mail-outline"></v-icon> ID Card
+          </v-col>
+          <v-col cols="12" md="10">
+            <v-text-field v-model="props.data.carteId" label="Card id"></v-text-field>
           </v-col>
         </v-row>
       </div>
@@ -277,19 +382,22 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
 
         <v-row>
           <v-col>
-            <v-select v-model="props.data.department" :items="departmentOptions" label="Département"></v-select>
+            <v-select v-model="props.data.department_id" :items="departments_list" item-title="departmentName"
+              item-value="id" @change="updateTeamList" @click="updateTeamList" label="Département"></v-select>
           </v-col>
           <v-col>
-            <v-select v-model="props.data.team" :items="teamOptions" label="Équipe"></v-select>
+            <v-select v-model="props.data.position_id" :items="team_list" item-title="name" item-value="id"
+              label="Équipe"></v-select>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-select v-model="props.data.regimeSocial" :items="regimeSocialOptions" label="Régime social"></v-select>
+            <v-select v-model="props.data.regimeSocial" :items="regimeSocialOptions" item-title="regimeSocial"
+              item-value="regimeSocial" label="Régime social"></v-select>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.autreRegimeSocial" label="Autre Régime Social"></v-text-field>
+            <v-text-field v-model="props.data.text" label="Autre Régime Social"></v-text-field>
           </v-col>
         </v-row>
       </div>
@@ -302,7 +410,7 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
       <v-btn @click="previousStep" :disabled="currentStep === 0">Previous</v-btn>
     </v-col>
     <v-col class="text-right">
-      <v-btn @click="nextStep" :disabled="currentStep === steps.length - 1">Next</v-btn>
+      <v-btn @click="nextStep" :disabled="currentStep === steps.length - 1 || !validateStep0()">Next</v-btn>
     </v-col>
   </v-row>
 </template>
@@ -311,6 +419,9 @@ const regimeSocialOptions = ['Option 1', 'Option 2', 'Option 3']; // Remplace av
 .avatar {
   margin: 0 10px;
   /* Ajuste cette valeur selon l'espace souhaité entre les avatars */
+}
+.margin-title{
+  margin-top: 12px;
 }
 
 .divider {

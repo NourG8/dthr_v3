@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import DataTable from '@/components/dataTable/DataTable.vue';
+import { useCompany } from '@/stores/company';
 import { useUser } from '@/stores/user';
 import userDetails from '@/views/Users/components/userDetails.vue';
 import userEdit from '@/views/Users/components/userEdit.vue';
 // const notyf = useNotyf()
 
-// Store
+// Store user
 const { get_users } = useUser()
 const { users_list, loading } = storeToRefs(useUser())
+
+// Store company
+const { get_companies } = useCompany()
+const { companies_list } = storeToRefs(useCompany())
 
 onMounted(() => {
     get_users()
