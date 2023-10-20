@@ -79,7 +79,7 @@ const upgradeBanner = computed(() => {
           to: '/dashboard',
         }"
       />
-       <VerticalNavLink
+      <VerticalNavLink
         :item="{
           title: 'Admin Settings',
           icon: 'mdi-cog-outline',
@@ -95,32 +95,34 @@ const upgradeBanner = computed(() => {
       />
 
       <!-- 👉 Pages -->
-      <VerticalNavSectionTitle
+      <!--
+        <VerticalNavSectionTitle
         :item="{
-          heading: 'Pages',
+        heading: 'Pages',
         }"
-      />
-      <VerticalNavLink
+        />
+        <VerticalNavLink
         :item="{
-          title: 'Login',
-          icon: 'bx-log-in',
-          to: '/login',
+        title: 'Login',
+        icon: 'bx-log-in',
+        to: '/login',
         }"
-      />
-      <VerticalNavLink
+        />
+        <VerticalNavLink
         :item="{
-          title: 'Register',
-          icon: 'bx-user-plus',
-          to: '/register',
+        title: 'Register',
+        icon: 'bx-user-plus',
+        to: '/register',
         }"
-      />
-      <VerticalNavLink
+        />
+        <VerticalNavLink
         :item="{
-          title: 'Error',
-          icon: 'bx-info-circle',
-          to: '/no-existence',
+        title: 'Error',
+        icon: 'bx-info-circle',
+        to: '/no-existence',
         }"
-      />
+        />
+      -->
 
       <!-- 👉 User Interface -->
       <VerticalNavSectionTitle
@@ -167,7 +169,7 @@ const upgradeBanner = computed(() => {
       <VerticalNavLink
         :item="{
           title: 'Contracts',
-          icon: 'mdi-text-box-multiple-outline', 
+          icon: 'mdi-text-box-multiple-outline',
           to: '/conracts',
         }"
       />
@@ -182,7 +184,7 @@ const upgradeBanner = computed(() => {
       <VerticalNavLink
         :item="{
           title: 'Work certificate',
-          icon: 'mdi-certificate-outline', 
+          icon: 'mdi-certificate-outline',
           to: '/work-certificate',
         }"
       />
@@ -197,7 +199,7 @@ const upgradeBanner = computed(() => {
       <VerticalNavLink
         :item="{
           title: 'Teams',
-          icon: 'mdi-account-multiple-outline', 
+          icon: 'mdi-account-multiple-outline',
           to: '/teams',
         }"
       />

@@ -61,6 +61,7 @@ const editedItem = ref<any>({
 
 const dialogDetails = ref(false)
 const dialogEdit = ref(false)
+const dialogAdd = ref(false)
 
 function closeDetails() {
     dialogDetails.value = false
@@ -69,6 +70,11 @@ function closeDetails() {
 function closeUpdate() {
     dialogEdit.value = false
 }
+
+function closeAdd() {
+    dialogAdd.value = false
+}
+
 
 function detailsUser(item : any){
     editedItem.value = Object.assign({}, item)
@@ -80,6 +86,10 @@ function updateUser(item : any){
     editedItem.value = Object.assign({}, item)
     dialogEdit.value = true 
     console.log(editedItem.value)
+}
+
+function AddUser(){
+    dialogAdd.value = true 
 }
 
 </script>
@@ -127,6 +137,26 @@ function updateUser(item : any){
             </v-card>
           </v-dialog>
 
+          <v-dialog v-model="dialogAdd" max-width="1500px">
+            <v-card flat class="pa-3 mt-2">
+              <v-card-title class="text-h5 mb-5"> Add User </v-card-title>
+              <v-card-text>
+                <userEdit></userEdit>
+                <v-row>
+                  <v-col cols="12">
+                    <v-card-actions>
+                      <span></span>
+                      <v-spacer></v-spacer>
+                      <v-btn color="primary" outlined class="mt-4" type="reset" @click="closeAdd()">
+                        Cancel
+                      </v-btn>
+                    </v-card-actions>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+
         <DataTable :columns="columns" :rows="users_list" :with-action="true">
         <template #image="data">
             <v-avatar size="50" class="ma-2">
@@ -150,7 +180,7 @@ function updateUser(item : any){
         <template #button-data>
             <VMenu>
                 <template #activator="{ props }">
-                    <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-plus-thick" @click="AddPartner">
+                    <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-plus-thick" @click="AddUser">
                         Add user
                     </VBtn>
                     <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-account-multiple-plus" @click="AddPartner">
