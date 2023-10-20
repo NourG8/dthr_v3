@@ -16,11 +16,6 @@ const { departments_list, team_list } = storeToRefs(useDepartment())
 const { get_companies } = useCompany()
 const { companies_list } = storeToRefs(useCompany())
 
-interface Props {
-  data: any;
-} 
-
-const props = withDefaults(defineProps<Props>(), {});
 
 onMounted(async () => {
   get_positions()
@@ -45,15 +40,15 @@ async function getRegimeSocial() {
 }
 
 function getCinAndPassportArray() {
-  if (props.data.cin) {
-    props.data.cin = String(props.data.cin)
+  if (editedItem.cin) {
+    editedItem.cin = String(editedItem.cin)
   }else{
-    props.data.cin = String("")
+    editedItem.cin = String("")
   }
-  if (props.data.numPassport) {
-    props.data.numPassport = String(props.data.numPassport)
+  if (editedItem.numPassport) {
+    editedItem.numPassport = String(editedItem.numPassport)
   }else{
-    props.data.numPassport = String("")
+    editedItem.numPassport = String("")
   }
 }
 
@@ -74,7 +69,7 @@ const steps = ref([
   { number: 7, name: 'Administrative' },
 ])
 
-const formData = reactive({
+const editedItem = reactive({
   // Les champs de la première étape
   lastName: '',
   firstName: '',
@@ -139,19 +134,19 @@ function isCardIdAndCinRequired() {
   validateCarteId()
   validateCIN()
 
-  return props.data.nationality !== nationality.value
+  return editedItem.nationality !== nationality.value
 }
-const department = ref(props.data.department_id)
-const team = ref(props.data.position_id)
+const department = ref(editedItem.department_id)
+const team = ref(editedItem.position_id)
 
 function updateTeamList() {
-  if (props.data.department_id) {
-    get_teams_department(props.data.department_id);
+  if (editedItem.department_id) {
+    get_teams_department(editedItem.department_id);
   }
-  if (props.data.department_id === department.value) {
-    props.data.position_id = team.value
+  if (editedItem.department_id === department.value) {
+    editedItem.position_id = team.value
   } else {
-    props.data.position_id = null;
+    editedItem.position_id = null;
   }
 }
 
@@ -187,56 +182,56 @@ const teamOptions = ['Équipe 1', 'Équipe 2', 'Équipe 3']; // Remplace avec te
 
 function validateStep0() {
   console.log((
-    requiredValidator(props.data.lastName) === true &&
-    lengthValidator(props.data.lastName, 15, 3) === true &&
-    requiredValidator(props.data.firstName) === true &&
-    lengthValidator(props.data.firstName, 15, 3) === true &&
-    requiredValidator(props.data.dateBirth) === true &&
-    dateMin18Validator(props.data.dateBirth) === true &&
-    dateMaxValidator(props.data.dateBirth) === true))
+    requiredValidator(editedItem.lastName) === true &&
+    lengthValidator(editedItem.lastName, 15, 3) === true &&
+    requiredValidator(editedItem.firstName) === true &&
+    lengthValidator(editedItem.firstName, 15, 3) === true &&
+    requiredValidator(editedItem.dateBirth) === true &&
+    dateMin18Validator(editedItem.dateBirth) === true &&
+    dateMaxValidator(editedItem.dateBirth) === true))
   return (
-    requiredValidator(props.data.lastName) === true &&
-    lengthValidator(props.data.lastName, 15, 3) === true &&
-    requiredValidator(props.data.firstName) === true &&
-    lengthValidator(props.data.firstName, 15, 3) === true &&
-    requiredValidator(props.data.dateBirth) === true &&
-    dateMin18Validator(props.data.dateBirth) === true &&
-    dateMaxValidator(props.data.dateBirth) === true)
+    requiredValidator(editedItem.lastName) === true &&
+    lengthValidator(editedItem.lastName, 15, 3) === true &&
+    requiredValidator(editedItem.firstName) === true &&
+    lengthValidator(editedItem.firstName, 15, 3) === true &&
+    requiredValidator(editedItem.dateBirth) === true &&
+    dateMin18Validator(editedItem.dateBirth) === true &&
+    dateMaxValidator(editedItem.dateBirth) === true)
 }
 
 function validateStep1() {
   return (
-    requiredValidator(props.data.address) === true &&
-    lengthValidator(props.data.address, 15, 3) === true &&
-    requiredValidator(props.data.email) === true &&
-    emailValidator(props.data.email) === true &&
-    emailValidator(props.data.emailProf) === true &&
-    requiredValidator(props.data.phone) === true &&
+    requiredValidator(editedItem.address) === true &&
+    lengthValidator(editedItem.address, 15, 3) === true &&
+    requiredValidator(editedItem.email) === true &&
+    emailValidator(editedItem.email) === true &&
+    emailValidator(editedItem.emailProf) === true &&
+    requiredValidator(editedItem.phone) === true &&
     validationPhoneError.value === '' &&
-    requiredValidator(props.data.phoneEmergency) === true &&
+    requiredValidator(editedItem.phoneEmergency) === true &&
     validationPhoneEmergencyError.value === ''
   );
 }
 
 function validateStep2() {
   return (
-    requiredValidator(props.data.nbChildren) === true &&
-    integerValidator(props.data.nbChildren) === true
+    requiredValidator(editedItem.nbChildren) === true &&
+    integerValidator(editedItem.nbChildren) === true
   );
 }
 
 function validateStep3() {
-  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && props.data.numPassport === ''
+  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && editedItem.numPassport === ''
 ) {
     // Cas 1
     // console.log("nour cas 1 ")
     return true
-  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && props.data.numPassport 
-  && lengthValidator(props.data.numPassport,company.value.max_passport,company.value.min_passport) === true) {
+  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && editedItem.numPassport 
+  && lengthValidator(editedItem.numPassport,company.value.max_passport,company.value.min_passport) === true) {
     // Cas 1
     // console.log("nour cas 2 ")
     return true
-  } else if(isCardIdAndCinRequired() === true && requiredValidator(props.data.carteId) === true && lengthValidator(props.data.carteId, 50, 3) === true && isValidPassport.value ){
+  } else if(isCardIdAndCinRequired() === true && requiredValidator(editedItem.carteId) === true && lengthValidator(editedItem.carteId, 50, 3) === true && isValidPassport.value ){
     // Cas 2
     //  console.log("nour cas 3 ")
     return true
@@ -248,25 +243,25 @@ function validateStep3() {
 
 function validateStep4() {
   return (
-    requiredValidator(props.data.specialty) === true &&
-    lengthValidator(props.data.specialty, 15, 4) === true &&
-    lengthValidator(props.data.levelStudies, 15, 4) === true &&
-    requiredValidator(props.data.levelStudies) === true
+    requiredValidator(editedItem.specialty) === true &&
+    lengthValidator(editedItem.specialty, 15, 4) === true &&
+    lengthValidator(editedItem.levelStudies, 15, 4) === true &&
+    requiredValidator(editedItem.levelStudies) === true
   );
 }
 
 function validateStep6() {
   return (
-    requiredValidator(props.data.integrationDate) === true &&
-    requiredValidator(props.data.department_id) === true  &&
-    requiredValidator(props.data.position_id) === true &&
-    requiredValidator(props.data.regimeSocial) === true  &&
-    requiredValidator(props.data.text) === true
+    requiredValidator(editedItem.integrationDate) === true &&
+    requiredValidator(editedItem.department_id) === true  &&
+    requiredValidator(editedItem.position_id) === true &&
+    requiredValidator(editedItem.regimeSocial) === true  &&
+    requiredValidator(editedItem.text) === true
   );
 }
 
 function save(){
-  console.log(props.data)
+  console.log(editedItem)
 }
 
 const phoneNumber = ref('')
@@ -315,9 +310,9 @@ const logNumPassport = (value) => {
 const isValidPassport = ref()
 const messageValidNumPassport = ref('')
 function validateNumPassport() {
-  const isNationality = props.data.nationality === company.value.nationality;
+  const isNationality = editedItem.nationality === company.value.nationality;
 
-  if (props.data.numPassport && lengthValidator(props.data.numPassport,company.value.max_passport,company.value.min_passport) != true){
+  if (editedItem.numPassport && lengthValidator(editedItem.numPassport,company.value.max_passport,company.value.min_passport) != true){
     // console.log("test 2")
     isValidPassport.value = false
     messageValidNumPassport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
@@ -337,14 +332,14 @@ function validateNumPassport() {
 const isValidCarteId = ref()
 const messageValidCarteId = ref('')
 function validateCarteId() {
-  const isNationality = props.data.nationality === company.value.nationality;
-  requiredValidator(props.data.carteId)
+  const isNationality = editedItem.nationality === company.value.nationality;
+  requiredValidator(editedItem.carteId)
 
-  if(!isNationality && !props.data.carteId ){
+  if(!isNationality && !editedItem.carteId ){
     // console.log("test 1")
     isValidCarteId.value = false
     messageValidCarteId.value = "carte id  is required !"
-  }else if (props.data.carteId && lengthValidator(props.data.carteId,8,6) != true){
+  }else if (editedItem.carteId && lengthValidator(editedItem.carteId,8,6) != true){
     // console.log("test 2")
     isValidCarteId.value = false
     messageValidCarteId.value = "carte id  must be between 6 and 8 characters !"
@@ -355,7 +350,7 @@ function validateCarteId() {
     messageValidCarteId.value = ""
   }
 
-  console.log("Nourrrr :  " , requiredValidator(props.data.carteId))
+  console.log("Nourrrr :  " , requiredValidator(editedItem.carteId))
 
   return {
     'otp-input': true,
@@ -367,14 +362,14 @@ const isValidCIN = ref();
 const messageValidCIN = ref('');
 
 function validateCIN() {
-  const isNationality = props.data.nationality === company.value.nationality;
-  requiredValidator(props.data.cin);
+  const isNationality = editedItem.nationality === company.value.nationality;
+  requiredValidator(editedItem.cin);
 
-  if (isNationality && !props.data.cin) {
+  if (isNationality && !editedItem.cin) {
     console.log("cin test 1")
     isValidCIN.value = false;
     messageValidCIN.value = "Le numéro de CIN est obligatoire !";
-  } else if (props.data.cin && lengthValidator(props.data.cin, 8, 6) !== true) {
+  } else if (editedItem.cin && lengthValidator(editedItem.cin, 8, 6) !== true) {
     console.log("cin test 2")
     isValidCIN.value = false;
     messageValidCIN.value = "Le numéro de CIN doit comporter entre 6 et 8 caractères !";
@@ -384,7 +379,7 @@ function validateCIN() {
     messageValidCIN.value = "";
   }
 
-  console.log("Validation du CIN : ", requiredValidator(props.data.cin));
+  console.log("Validation du CIN : ", requiredValidator(editedItem.cin));
 
   return {
     'otp-input': true,
@@ -411,26 +406,26 @@ function validateCIN() {
         <!-- Contenu de l'étape Generale -->
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.lastName" label="Nom"
-              :rules="[requiredValidator, lengthValidator(props.data.lastName, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.lastName" label="Nom"
+              :rules="[requiredValidator, lengthValidator(editedItem.lastName, 15, 3)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.firstName" label="Prénom"
-              :rules="[requiredValidator, lengthValidator(props.data.lastName, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.firstName" label="Prénom"
+              :rules="[requiredValidator, lengthValidator(editedItem.lastName, 15, 3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.dateBirth" label="Date de naissance" type="date"
-              :rules="[requiredValidator, dateMin18Validator, dateMaxValidator(props.data.dateBirth)]"></v-text-field>
+            <v-text-field v-model="editedItem.dateBirth" label="Date de naissance" type="date"
+              :rules="[requiredValidator, dateMin18Validator, dateMaxValidator(editedItem.dateBirth)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.placeBirth" label="Lieu de naissance"
-              :rules="[requiredValidator, lengthValidator(props.data.placeBirth, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.placeBirth" label="Lieu de naissance"
+              :rules="[requiredValidator, lengthValidator(editedItem.placeBirth, 15, 3)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-select v-model="props.data.sex" :items="sexOptions" label="Sexe" :rules="[requiredValidator]"></v-select>
+            <v-select v-model="editedItem.sex" :items="sexOptions" label="Sexe" :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
 
@@ -447,32 +442,32 @@ function validateCIN() {
         <!-- Contenu de l'étape Contacts -->
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.address" label="Adresse"
-              :rules="[requiredValidator, lengthValidator(props.data.address, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.address" label="Adresse"
+              :rules="[requiredValidator, lengthValidator(editedItem.address, 15, 3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.email" label="Email"
-              :rules="[requiredValidator, emailValidator(props.data.email)]"></v-text-field>
+            <v-text-field v-model="editedItem.email" label="Email"
+              :rules="[requiredValidator, emailValidator(editedItem.email)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.emailProf" label="Email professionnel"
-              :rules="[emailValidator(props.data.emailProf)]"></v-text-field>
+            <v-text-field v-model="editedItem.emailProf" label="Email professionnel"
+              :rules="[emailValidator(editedItem.emailProf)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <vue-tel-input :value="props.data.phone" type="number" mode="international"
+            <vue-tel-input :value="editedItem.phone" type="number" mode="international"
               :class="{ 'custom-input': !validationPhoneError, 'error-tel-input': validationPhoneError }"
               :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customPhoneValidation">
             </vue-tel-input>
             <div class="error-message v-input__details v-messages__message">{{ validationPhoneError }}</div>
           </v-col>
           <v-col>
-            <vue-tel-input :value="props.data.phoneEmergency" type="number" mode="international"
+            <vue-tel-input :value="editedItem.phoneEmergency" type="number" mode="international"
               :class="{ 'custom-input': !validationPhoneEmergencyError, 'error-tel-input': validationPhoneEmergencyError }"
               :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customPhoneEmergencyValidation">
             </vue-tel-input>
@@ -494,14 +489,14 @@ function validateCIN() {
         <!-- Contenu de l'étape Family Situation -->
         <v-row>
           <v-col>
-            <v-select v-model="props.data.FamilySituation" :items="familySituationOptions" label="Situation familiale"
+            <v-select v-model="editedItem.FamilySituation" :items="familySituationOptions" label="Situation familiale"
               :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
         <v-row>
-          <v-col>{{ requiredValidator(props.data.nbChildren) }}
-            <v-text-field v-model="props.data.nbChildren" label="Nombre d'enfants"
-              :rules="[requiredValidator, integerValidator(props.data.nbChildren)]"></v-text-field>
+          <v-col>{{ requiredValidator(editedItem.nbChildren) }}
+            <v-text-field v-model="editedItem.nbChildren" label="Nombre d'enfants"
+              :rules="[requiredValidator, integerValidator(editedItem.nbChildren)]"></v-text-field>
           </v-col>
         </v-row>
 
@@ -524,7 +519,7 @@ function validateCIN() {
           <v-col cols="12" md="5" class="mt-2">
             <v-otp-input
               ref="otpInput"
-              v-model:value="props.data.numPassport"
+              v-model:value="editedItem.numPassport"
               separator="-"
               :input-classes="validateNumPassport()"
               :num-inputs="company.max_passport"
@@ -536,7 +531,7 @@ function validateCIN() {
             </div>
           </v-col>
           <v-col cols="12" md="4" class="mt-2 md:mt-0">
-            <v-text-field v-model="props.data.nationality" @change="isCardIdAndCinRequired" @click="isCardIdAndCinRequired"
+            <v-text-field v-model="editedItem.nationality" @change="isCardIdAndCinRequired" @click="isCardIdAndCinRequired"
               label="Nationalité" :disabled="upd == 0"></v-text-field>
           </v-col>
           <v-col cols="12" md="1" class="mt-2 md:mt-0">
@@ -552,16 +547,16 @@ function validateCIN() {
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> CIN
           </v-col>
           <v-col cols="12" md="5">
-            <v-otp-input ref="otpInput" v-model:value="props.data.cin" separator="-"
+            <v-otp-input ref="otpInput" v-model:value="editedItem.cin" separator="-"
               :num-inputs="company.max_cin" input-type="numeric"
               :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']"
               :input-classes="validateCIN()" />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field type="date" v-model="props.data.deliveryDateCin" label="Date de délivrance CIN"></v-text-field>
+            <v-text-field type="date" v-model="editedItem.deliveryDateCin" label="Date de délivrance CIN"></v-text-field>
           </v-col>
           <v-col cols="12" md="2">
-            <v-text-field v-model="props.data.deliveryPlaceCin" label="Lieu de délivrance CIN"></v-text-field>
+            <v-text-field v-model="editedItem.deliveryPlaceCin" label="Lieu de délivrance CIN"></v-text-field>
           </v-col>
         </v-row>
         <v-row cols="12" v-if="isCardIdAndCinRequired() === true">  <!-- -->
@@ -569,10 +564,10 @@ function validateCIN() {
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> ID Card
           </v-col>
           <v-col cols="12" md="10">
-            <v-text-field v-model="props.data.carteId" label="Card id" 
+            <v-text-field v-model="editedItem.carteId" label="Card id" 
               :class="{ 'error-input' : isValidCarteId }"
               :style="{ 'border-color': isValidCarteId ? 'red' : '', 'border-radius': '5px' }"
-              :rules="[requiredValidator(props.data.carteId) , lengthValidator(props.data.carteId, 50, 3)]"
+              :rules="[requiredValidator(editedItem.carteId) , lengthValidator(editedItem.carteId, 50, 3)]"
               @input="validateCarteId()">
             </v-text-field>
           </v-col>
@@ -592,12 +587,12 @@ function validateCIN() {
         <!-- Contenu de l'étape Study -->
         <v-row>
           <v-col>
-            <v-text-field v-model="props.data.levelStudies" label="Niveau d'études"
-            :rules="[requiredValidator, lengthValidator(props.data.levelStudies, 15, 4)]"></v-text-field>
+            <v-text-field v-model="editedItem.levelStudies" label="Niveau d'études"
+            :rules="[requiredValidator, lengthValidator(editedItem.levelStudies, 15, 4)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.specialty" label="Spécialité" 
-            :rules="[requiredValidator, lengthValidator(props.data.specialty, 15, 4)]"></v-text-field>
+            <v-text-field v-model="editedItem.specialty" label="Spécialité" 
+            :rules="[requiredValidator, lengthValidator(editedItem.specialty, 15, 4)]"></v-text-field>
           </v-col> 
         </v-row>
 
@@ -641,32 +636,32 @@ function validateCIN() {
         <!-- Contenu de l'étape Administrative -->
         <v-row>
           <v-col>
-            <v-text-field type="date" v-model="props.data.integrationDate" label="Date d'intégration"
+            <v-text-field type="date" v-model="editedItem.integrationDate" label="Date d'intégration"
             :rules="[requiredValidator]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.matricule" label="Matricule"></v-text-field>
+            <v-text-field v-model="editedItem.matricule" label="Matricule"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-select v-model="props.data.department_id" :items="departments_list" item-title="departmentName"
+            <v-select v-model="editedItem.department_id" :items="departments_list" item-title="departmentName"
               item-value="id" @change="updateTeamList" @click="updateTeamList" label="Département"  :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>
-            <v-select v-model="props.data.position_id" :items="team_list" item-title="name" item-value="id"
+            <v-select v-model="editedItem.position_id" :items="team_list" item-title="name" item-value="id"
               label="Équipe"  :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-select v-model="props.data.regimeSocial" :items="regimeSocialOptions" item-title="regimeSocial"
+            <v-select v-model="editedItem.regimeSocial" :items="regimeSocialOptions" item-title="regimeSocial"
               item-value="regimeSocial" label="Régime social"  :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>
-            <v-text-field v-model="props.data.text" label="Autre Régime Social"  :rules="[requiredValidator]"></v-text-field>
+            <v-text-field v-model="editedItem.text" label="Autre Régime Social"  :rules="[requiredValidator]"></v-text-field>
           </v-col>
         </v-row>
 

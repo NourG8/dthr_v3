@@ -42,13 +42,13 @@ const onSubmit = () => {
         </template>
 
         <VCardTitle class="text-2xl font-weight-bold">
-          sneat
+          Digitrends
         </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
         <h5 class="text-h5 mb-1">
-          Welcome to sneat! 👋🏻
+          Welcome ! 👋🏻
         </h5>
         <p class="mb-0">
           Verif code
