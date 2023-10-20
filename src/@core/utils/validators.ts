@@ -39,7 +39,7 @@ export const dateMaxValidator = (value: unknown) => {
     const today = moment(date_now.format('YYYY-MM-DD'))
     const inputDate = moment(value, 'YYYY-MM-DD')
 
-    console.log(inputDate.isAfter(today))
+    // console.log(inputDate.isAfter(today))
     if (inputDate.isAfter(today))
       return 'validators.max_date_error'
   }
@@ -53,7 +53,7 @@ export const dateMinValidator = (value: unknown) => {
     const today = moment(date_now.format('YYYY-MM-DD'))
     const inputDate = moment(value, 'YYYY-MM-DD')
 
-    console.log(inputDate.isBefore(today))
+    // console.log(inputDate.isBefore(today))
     if (inputDate.isBefore(today))
       return 'validators.min_date_error'
   }
@@ -212,3 +212,86 @@ export const alphaDashValidator = (value: unknown) => {
 
   return /^[0-9A-Z_-]*$/i.test(valueAsString) || 'validators.all_Character_are_not_valid'
 }
+
+export const vueTelInputValidator = (countryInfo: unknown) => {
+  // Utilise les informations de countryInfo pour valider le numéro
+  if (countryInfo?.valid === true) {
+    return '';  // Numéro de téléphone valide, renvoie une chaîne vide
+  }
+  
+  return 'Numero de telephone invalide !';
+}
+
+export const validatePassportNumber = (value: string, carteId: unknown, cin: unknown, deliveryDateCin: unknown, deliveryPlaceCin: unknown, nationality : unknown) => {
+  if (nationality === 'Tunisienne' ) {
+    return true;
+  }
+  // Le champ n'est pas valide
+  return "Num passport required !";
+}
+
+
+// export const validatePassportNumber = (value: string , carteId: unknown, cin: unknown ,deliveryDateCin: unknown,deliveryPlaceCin: unknown ) => {
+//   const isRequired =
+//     carteId === null &&
+//     cin === null &&
+//     deliveryDateCin === null &&
+//     deliveryPlaceCin === null;
+
+//   const rules = [];
+//   if (isRequired) {
+//     rules.push('required');
+//   }
+
+//   rules.push(`min:8`);
+//   rules.push(`max:8`);
+//   rules.push('alpha_num');
+
+//   const isValid = validateWithRules(value, rules);
+//   console.log("isvalid : ", isValid)
+//   return isValid;
+// }
+
+// // Cette fonction applique des règles de validation à une valeur
+// export const validateWithRules = (value : unknown, rules :unknown) => {
+//   // Parcours de toutes les règles
+//   for (const rule of rules) {
+//     // Divise la règle en parties (par exemple, 'min:8' devient ['min', '8'])
+//     const [ruleName, ruleValue] = rule.split(':');
+
+//     // Vérifie chaque type de règle
+//     switch (ruleName) {
+//       case 'required':
+//         if (!value) {
+//           return false; // Échoue la validation si la valeur est requise mais manquante
+//         }
+//         break;
+
+//       case 'min':
+//         if (value.length < ruleValue) {
+//           return false; // Échoue la validation si la valeur est inférieure à la longueur minimale requise
+//         }
+//         break;
+
+//       case 'max':
+//         if (value.length > ruleValue) {
+//           return false; // Échoue la validation si la valeur dépasse la longueur maximale requise
+//         }
+//         break;
+
+//       case 'alpha_num':
+//         if (!/^[a-zA-Z0-9]+$/.test(value)) {
+//           return false; // Échoue la validation si la valeur ne contient pas uniquement des lettres et des chiffres
+//         }
+//         break;
+
+//       default:
+//         break;
+//     }
+//   }
+
+//   return true; // Si la valeur passe toutes les règles, elle est considérée comme valide
+// }
+
+
+
