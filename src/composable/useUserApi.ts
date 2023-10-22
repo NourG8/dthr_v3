@@ -62,6 +62,40 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
+  
+  async function store_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.post<any>('/users', payload)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+  
+  async function update_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.put<any>(`users/${payload.id}`, payload)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function delete_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.delete<any>(`users/${payload.id}`)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
   async function login({ email, password }) {
     loading.value = true
     
@@ -205,6 +239,9 @@ export const useUserApi = createSharedComposable(() => {
   return {
     get_users,
     get_user,
+    store_user,
+    update_user,
+    delete_user,
     logout,
     login,
     loading,
