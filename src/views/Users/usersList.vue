@@ -2,6 +2,7 @@
 import DataTable from '@/components/dataTable/DataTable.vue';
 import { useCompany } from '@/stores/company';
 import { useUser } from '@/stores/user';
+import userAdd from '@/views/Users/components/userAdd.vue';
 import userDetails from '@/views/Users/components/userDetails.vue';
 import userEdit from '@/views/Users/components/userEdit.vue';
 // const notyf = useNotyf()
@@ -141,7 +142,7 @@ function AddUser(){
             <v-card flat class="pa-3 mt-2">
               <v-card-title class="text-h5 mb-5"> Add User </v-card-title>
               <v-card-text>
-                <userEdit></userEdit>
+                <userAdd :data="dialogAdd"></userAdd>
                 <v-row>
                   <v-col cols="12">
                     <v-card-actions>
