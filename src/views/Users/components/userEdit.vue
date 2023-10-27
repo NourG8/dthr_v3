@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { dateMaxValidator, dateMin18Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
 import { useCompany } from '@/stores/company';
 import { useDepartment } from '@/stores/department';
 import { usePosition } from '@/stores/position';
@@ -44,21 +44,7 @@ async function getRegimeSocial() {
   regimeSocialOptions.value = JSON.parse(company.value.regimeSocial)
 }
 
-function getCinAndPassportArray() {
-  if (props.data.cin) {
-    props.data.cin = String(props.data.cin)
-  } else {
-    props.data.cin = String("")
-  }
-  if (props.data.numPassport) {
-    props.data.numPassport = String(props.data.numPassport)
-  } else {
-    props.data.numPassport = String("")
-  }
-}
-
 const step = ref(1)
-
 const upd = ref(0)
 function updateNationality() {
   upd.value = !upd.value
@@ -111,27 +97,40 @@ const formData = reactive({
   regimeSocial: null,
   autreRegimeSocial: '',
 
-  position_id: '',
+  team_id: '',
   department_id: ''
 
 });
 
 const enabled = ref(true)
 
-const listDragAndDrop = ref([
-  { id: 1, text: 'atmosphère' },
-  { id: 2, text: 'professionnalisme' },
-  { id: 3, text: 'Reconnaissance' },
-  { id: 4, text: 'argent' },
-  { id: 5, text: 'environnement de travail' }
-])
+// const listDragAndDrop = ref([
+//   { id: 1, text: 'atmosphère' },
+//   { id: 2, text: 'professionnalisme' },
+//   { id: 3, text: 'Reconnaissance' },
+//   { id: 4, text: 'argent' },
+//   { id: 5, text: 'environnement de travail' }
+// ])
 
 function checkMove(e) {
-  const draggedItem = listDragAndDrop.value[e.draggedContext.index];
-  const replacedItem = listDragAndDrop.value[e.draggedContext.futureIndex];
+  const draggedItem = props.data.motivation[e.draggedContext.index];
+  const replacedItem = props.data.motivation[e.draggedContext.futureIndex];
   const tempId = draggedItem.id;
   draggedItem.id = replacedItem.id;
   replacedItem.id = tempId;
+}
+
+function getCinAndPassportArray() {
+  if (props.data.cin) {
+    props.data.cin = String(props.data.cin)
+  }else{
+    props.data.cin = String("")
+  }
+  if (props.data.numPassport) {
+    props.data.numPassport = String(props.data.numPassport)
+  }else{
+    props.data.numPassport = String("")
+  }
 }
 
 function isCardIdAndCinRequired() {
@@ -139,19 +138,27 @@ function isCardIdAndCinRequired() {
   validateCarteId()
   validateCIN()
 
+  if(props.data.nationality !== nationality.value){
+   props.data.cin = ''
+   props.data.deliveryDateCin = ''
+   props.data.deliveryPlaceCin = ''
+  }else{
+    props.data.carteId = ''
+  }
+
   return props.data.nationality !== nationality.value
 }
 const department = ref(props.data.department_id)
-const team = ref(props.data.position_id)
+const team = ref(props.data.team_id)
 
 function updateTeamList() {
   if (props.data.department_id) {
     get_teams_department(props.data.department_id);
   }
   if (props.data.department_id === department.value) {
-    props.data.position_id = team.value
+    props.data.team_id = team.value
   } else {
-    props.data.position_id = null;
+    props.data.team_id = null;
   }
 }
 
@@ -182,26 +189,21 @@ const sexOptions = ['Women', 'Man'];
 const familySituationOptions = ['Married', 'Divorced', 'Single'];
 const isDragging = ref(false)
 
-const departmentOptions = ['Département 1', 'Département 2', 'Département 3']; // Remplace avec tes options réelles
-const teamOptions = ['Équipe 1', 'Équipe 2', 'Équipe 3']; // Remplace avec tes options réelles
+// const departmentOptions = ['Département 1', 'Département 2', 'Département 3']; // Remplace avec tes options réelles
+// const teamOptions = ['Équipe 1', 'Équipe 2', 'Équipe 3']; // Remplace avec tes options réelles
+
 
 function validateStep0() {
-  console.log((
-    requiredValidator(props.data.lastName) === true &&
-    lengthValidator(props.data.lastName, 15, 3) === true &&
-    requiredValidator(props.data.firstName) === true &&
-    lengthValidator(props.data.firstName, 15, 3) === true &&
-    requiredValidator(props.data.dateBirth) === true &&
-    dateMin18Validator(props.data.dateBirth) === true &&
-    dateMaxValidator(props.data.dateBirth) === true))
   return (
     requiredValidator(props.data.lastName) === true &&
     lengthValidator(props.data.lastName, 15, 3) === true &&
     requiredValidator(props.data.firstName) === true &&
     lengthValidator(props.data.firstName, 15, 3) === true &&
+    requiredValidator(props.data.placeBirth) === true &&
+    lengthValidator(props.data.placeBirth, 15, 3) === true &&
+    requiredValidator(props.data.sex) === true &&
     requiredValidator(props.data.dateBirth) === true &&
-    dateMin18Validator(props.data.dateBirth) === true &&
-    dateMaxValidator(props.data.dateBirth) === true)
+    dateMin18Max100Validator(props.data.dateBirth) === true)
 }
 
 function validateStep1() {
@@ -211,10 +213,9 @@ function validateStep1() {
     requiredValidator(props.data.email) === true &&
     emailValidator(props.data.email) === true &&
     emailValidator(props.data.emailProf) === true &&
-    requiredValidator(props.data.phone) === true &&
-    validationPhoneError.value === '' &&
-    requiredValidator(props.data.phoneEmergency) === true &&
-    validationPhoneEmergencyError.value === ''
+    props.data.phone != ''&& props.data.phoneEmergency &&
+    validationPhoneError.value === 'valid' &&
+    validationPhoneEmergencyError.value === 'valid'
   );
 }
 
@@ -226,22 +227,19 @@ function validateStep2() {
 }
 
 function validateStep3() {
-  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && props.data.numPassport === ''
-  ) {
-    // Cas 1
-    // console.log("nour cas 1 ")
+  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false  && requiredValidator(props.data.deliveryDateCin) === true 
+  && dateMinNowMax100Validator(props.data.deliveryDateCin) === true && requiredValidator(props.data.deliveryPlaceCin) === true 
+  && lengthValidator(props.data.deliveryPlaceCin , 15,3) === true && props.data.numPassport === ''
+) {
     return true
-  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && props.data.numPassport
-    && lengthValidator(props.data.numPassport, company.value.max_passport, company.value.min_passport) === true) {
-    // Cas 1
-    // console.log("nour cas 2 ")
+  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && props.data.numPassport 
+  && requiredValidator(props.data.deliveryDateCin) === true && dateMinNowMax100Validator(props.data.deliveryDateCin) === true  
+  && requiredValidator(props.data.deliveryPlaceCin) === true  && lengthValidator(props.data.deliveryPlaceCin , 15,3) === true
+  && lengthValidator(props.data.numPassport,company.value.max_passport,company.value.min_passport) === true) {
     return true
-  } else if (isCardIdAndCinRequired() === true && requiredValidator(props.data.carteId) === true && lengthValidator(props.data.carteId, 50, 3) === true && isValidPassport.value) {
-    // Cas 2
-    //  console.log("nour cas 3 ")
+  } else if(isCardIdAndCinRequired() === true && requiredValidator(props.data.carteId) === true && lengthValidator(props.data.carteId, 50, 3) === true && isValidPassport.value ){
     return true
-  } else {
-    // console.log("nour cas 4 ")
+  }else{
     return false
   }
 }
@@ -256,23 +254,34 @@ function validateStep4() {
 }
 
 function validateStep6() {
-  return (
-    requiredValidator(props.data.integrationDate) === true &&
-    requiredValidator(props.data.department_id) === true &&
-    requiredValidator(props.data.position_id) === true &&
-    requiredValidator(props.data.regimeSocial) === true &&
-    requiredValidator(props.data.text) === true
-  );
+  if( requiredValidator(props.data.integrationDate) === true &&
+    dateIntegrationValidator(props.data.integrationDate , props.data.dateBirth) === true &&
+    requiredValidator(props.data.department_id) === true  &&
+    requiredValidator(props.data.team_id) === true &&
+    requiredValidator(props.data.regimeSocial) === true && 
+    requiredValidator(props.data.matricule) === true && 
+    lengthValidator(props.data.matricule, 15, 3) === true &&
+    props.data.text !=null && lengthValidator(props.data.text, 15, 4) === true ){
+       return true
+    }else if( requiredValidator(props.data.integrationDate) === true &&
+    dateIntegrationValidator(props.data.integrationDate , props.data.dateBirth) === true &&
+    requiredValidator(props.data.department_id) === true  &&
+    requiredValidator(props.data.team_id) === true &&
+    requiredValidator(props.data.matricule) === true && 
+    lengthValidator(props.data.matricule, 15, 3) === true &&
+    requiredValidator(props.data.regimeSocial) === true && props.data.text === '' ){
+        return true
+    }else{
+        return false
+    }
 }
 
-function save() {
-  console.log(props.data)
-}
+// function save() {
+//   console.log(props.data)
+// }
 
 const phoneNumber = ref('')
 const selectedCountry = ref({ valid: false });
-const valid = ref(false);
-
 const validationPhoneError = ref('');
 const validationPhoneEmergencyError = ref('');
 
@@ -282,15 +291,18 @@ const customPhoneValidation = async (value, country) => {
   }
   selectedCountry.value = country;
   phoneNumber.value = value;
+  props.data.phone = value
 
-  if (!value) {
-    validationPhoneError.value = 'Numéro de téléphone est required !';
-  } else if (vueTelInputValidator(country)) {
-    validationPhoneError.value = 'Numéro de téléphone invalide !';
-  } else {
+  // console.log(selectedCountry.value.valid)
+    
+  if (selectedCountry.value.valid === undefined ) {
     validationPhoneError.value = '';
+  }else if(selectedCountry.value.valid === false){
+    validationPhoneError.value = 'Phone number is invalide !';
+  }else{
+    validationPhoneError.value = 'valid';
   }
-};
+}
 
 const customPhoneEmergencyValidation = async (value, country) => {
   while (!country) {
@@ -298,18 +310,15 @@ const customPhoneEmergencyValidation = async (value, country) => {
   }
   selectedCountry.value = country;
   phoneNumber.value = value;
+  props.data.phoneEmergency = value  
 
-  if (!value) {
-    validationPhoneEmergencyError.value = 'Numéro de téléphone est required !';
-  } else if (vueTelInputValidator(country)) {
-    validationPhoneEmergencyError.value = 'Numéro de téléphone invalide !';
-  } else {
+  if (selectedCountry.value.valid === undefined ) {
     validationPhoneEmergencyError.value = '';
+  }else if (selectedCountry.value.valid === false) {
+    validationPhoneEmergencyError.value = 'Phone number is invalide !';
+  } else {
+    validationPhoneEmergencyError.value ='valid';
   }
-};
-
-const logNumPassport = (value) => {
-  console.log("Nouvelle valeur de numPassport:", value);
 }
 
 const isValidPassport = ref()
@@ -317,12 +326,12 @@ const messageValidNumPassport = ref('')
 function validateNumPassport() {
   const isNationality = props.data.nationality === company.value.nationality;
 
-  if (props.data.numPassport && lengthValidator(props.data.numPassport, company.value.max_passport, company.value.min_passport) != true) {
+  if (props.data.numPassport && lengthValidator(props.data.numPassport,company.value.max_passport,company.value.min_passport) != true){
     // console.log("test 2")
     isValidPassport.value = false
     messageValidNumPassport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
   }
-  else {
+  else{
     // console.log("test 3")
     isValidPassport.value = true
     messageValidNumPassport.value = ""
@@ -340,22 +349,20 @@ function validateCarteId() {
   const isNationality = props.data.nationality === company.value.nationality;
   requiredValidator(props.data.carteId)
 
-  if (!isNationality && !props.data.carteId) {
+  if(!isNationality && !props.data.carteId ){
     // console.log("test 1")
     isValidCarteId.value = false
-    messageValidCarteId.value = "carte id  is required !"
-  } else if (props.data.carteId && lengthValidator(props.data.carteId, 8, 6) != true) {
+    messageValidCarteId.value = "carte id is required !"
+  }else if (props.data.carteId && lengthValidator(props.data.carteId,8,6) != true){
     // console.log("test 2")
     isValidCarteId.value = false
-    messageValidCarteId.value = "carte id  must be between 6 and 8 characters !"
+    messageValidCarteId.value = "carte id must be between 6 and 8 characters !"
   }
-  else {
+  else{
     // console.log("test 3")
     isValidCarteId.value = true
     messageValidCarteId.value = ""
   }
-
-  console.log("Nourrrr :  ", requiredValidator(props.data.carteId))
 
   return {
     'otp-input': true,
@@ -371,27 +378,31 @@ function validateCIN() {
   requiredValidator(props.data.cin);
 
   if (isNationality && !props.data.cin) {
-    console.log("cin test 1")
+    // console.log("cin test 1")
     isValidCIN.value = false;
-    messageValidCIN.value = "Le numéro de CIN est obligatoire !";
-  } else if (props.data.cin && lengthValidator(props.data.cin, 8, 6) !== true) {
-    console.log("cin test 2")
+    messageValidCIN.value = "Cin number is required !";
+  } else if (props.data.cin && lengthValidator(props.data.cin, company.value.max_cin,  company.value.min_cin) !== true) {
+    // console.log("cin test 2")
     isValidCIN.value = false;
-    messageValidCIN.value = "Le numéro de CIN doit comporter entre 6 et 8 caractères !";
+    messageValidCIN.value = `Cin number must be between ${company.value.min_cin} and ${company.value.max_cin} characters !`;
   } else {
-    console.log("cin ntest 3")
+    // console.log("cin ntest 3")
     isValidCIN.value = true;
     messageValidCIN.value = "";
   }
 
-  console.log("Validation du CIN : ", requiredValidator(props.data.cin));
-
   return {
     'otp-input': true,
-    'error-tel-input': !isValidCIN.value
+    'error-tel-input': !isValidCIN.value && props.data.cin !== ''
   };
 }
 
+const emit = defineEmits(['update'])
+const emitupdate = () => {
+  // Vous émettez l'événement 'update'
+  // props.data parametre de l'evenement update
+  emit('update', props.data);
+};
 
 </script>
 
@@ -423,7 +434,7 @@ function validateCIN() {
         <v-row>
           <v-col>
             <v-text-field v-model="props.data.dateBirth" label="Date de naissance" type="date"
-              :rules="[requiredValidator, dateMin18Validator, dateMaxValidator(props.data.dateBirth)]"></v-text-field>
+              :rules="[requiredValidator, dateMin18Max100Validator]"></v-text-field>
           </v-col>
           <v-col>
             <v-text-field v-model="props.data.placeBirth" label="Lieu de naissance"
@@ -465,18 +476,18 @@ function validateCIN() {
 
         <v-row>
           <v-col>
-            <vue-tel-input :value="props.data.phone" type="number" mode="international"
-              :class="{ 'custom-input': !validationPhoneError, 'error-tel-input': validationPhoneError }"
-              :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customPhoneValidation">
+            <vue-tel-input v-model:value="props.data.phone" type="number" mode="international"
+              :class="{ 'custom-input': validationPhoneError !=='Phone number is invalide !', 'custom-input error-tel-input': validationPhoneError === 'Phone number is invalide !' }"
+              :rules="[requiredValidator(props.data.phone), vueTelInputValidator(selectedCountry)]" @input="customPhoneValidation">
             </vue-tel-input>
-            <div class="error-message v-input__details v-messages__message">{{ validationPhoneError }}</div>
+            <div class="error-message v-input__details v-messages__message"  v-if="validationPhoneError !== 'valid'">{{ validationPhoneError }}</div>
           </v-col>
           <v-col>
-            <vue-tel-input :value="props.data.phoneEmergency" type="number" mode="international"
-              :class="{ 'custom-input': !validationPhoneEmergencyError, 'error-tel-input': validationPhoneEmergencyError }"
+            <vue-tel-input  v-model:value="props.data.phoneEmergency" type="number" mode="international"
+              :class="{ 'custom-input': validationPhoneEmergencyError  !=='Phone number is invalide !', 'custom-input error-tel-input': validationPhoneEmergencyError === 'Phone number is invalide !' }"
               :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customPhoneEmergencyValidation">
             </vue-tel-input>
-            <div class="error-message v-input__details v-messages__message">{{ validationPhoneEmergencyError }}</div>
+            <div class="error-message v-input__details v-messages__message" v-if="validationPhoneEmergencyError !== 'valid'">{{ validationPhoneEmergencyError }}</div>
           </v-col>
         </v-row>
 
@@ -499,7 +510,7 @@ function validateCIN() {
           </v-col>
         </v-row>
         <v-row>
-          <v-col>{{ requiredValidator(props.data.nbChildren) }}
+          <v-col>
             <v-text-field v-model="props.data.nbChildren" label="Nombre d'enfants"
               :rules="[requiredValidator, integerValidator(props.data.nbChildren)]"></v-text-field>
           </v-col>
@@ -518,20 +529,26 @@ function validateCIN() {
       <div v-else-if="currentStep === 3">
         <!-- Contenu de l'étape Identity -->
         <v-row>
-          <v-col cols="12" md="2" class="mt-4">
+          <v-col cols="12" md="2"  class="mt-4">
             <v-icon start icon="mdi-passport"></v-icon> passport number
           </v-col>
           <v-col cols="12" md="5" class="mt-2">
-            <v-otp-input ref="otpInput" v-model:value="props.data.numPassport" separator="-"
-              :input-classes="validateNumPassport()" :num-inputs="company.max_passport" input-type="letter-numeric"
-              :conditionalClass="['one', 'two', 'three', 'four']"></v-otp-input>
+            <v-otp-input
+              ref="otpInput"
+              v-model:value="props.data.numPassport"
+              separator="-"
+              :input-classes="validateNumPassport()"
+              :num-inputs="company.max_passport"
+              input-type="letter-numeric"
+              :conditionalClass="['one', 'two', 'three', 'four']"
+            ></v-otp-input>
             <div v-if="!isValidPassport.value" class="error-message v-input__details v-messages__message">
-              {{ messageValidNumPassport }}
+             {{ messageValidNumPassport }}
             </div>
           </v-col>
           <v-col cols="12" md="4" class="mt-2 md:mt-0">
-            <v-text-field v-model="props.data.nationality" @change="isCardIdAndCinRequired"
-              @click="isCardIdAndCinRequired" label="Nationalité" :disabled="upd == 0"></v-text-field>
+            <v-text-field v-model="props.data.nationality" @change="isCardIdAndCinRequired" @click="isCardIdAndCinRequired"
+              label="Nationalité" :disabled="upd == 0"></v-text-field>
           </v-col>
           <v-col cols="12" md="1" class="mt-2 md:mt-0">
             <v-btn @click="updateNationality" outlined color="rgb(34 167 95)" class="ml-5 mt-2"
@@ -546,25 +563,29 @@ function validateCIN() {
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> CIN
           </v-col>
           <v-col cols="12" md="5">
-            <v-otp-input ref="otpInput" v-model:value="props.data.cin" separator="-" :num-inputs="company.max_cin"
-              input-type="numeric" :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']"
-              :input-classes="validateCIN()" />
+            <v-otp-input ref="otpInput" :value="props.data.cin" separator="-"
+              :num-inputs="company.max_cin" input-type="numeric"
+              :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']"
+              :input-classes="validateCIN() " />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field type="date" v-model="props.data.deliveryDateCin" label="Date de délivrance CIN"></v-text-field>
+            <v-text-field type="date" v-model="props.data.deliveryDateCin" label="Date de délivrance CIN"
+            :rules="[props.data.cin !== null ? (requiredValidator, dateMinNowMax100Validator) : true ]"></v-text-field>
           </v-col>
           <v-col cols="12" md="2">
-            <v-text-field v-model="props.data.deliveryPlaceCin" label="Lieu de délivrance CIN"></v-text-field>
+            <v-text-field v-model="props.data.deliveryPlaceCin" label="Lieu de délivrance CIN" 
+            :rules="[props.data.cin !== null ? (requiredValidator,lengthValidator(props.data.deliveryPlaceCin , 15,3)) : true ]" ></v-text-field>
           </v-col>
         </v-row>
-        <v-row cols="12" v-if="isCardIdAndCinRequired() === true"> <!-- -->
+        <v-row cols="12" v-if="isCardIdAndCinRequired() === true">  <!-- -->
           <v-col md="2" class="margin-title">
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> ID Card
           </v-col>
           <v-col cols="12" md="10">
-            <v-text-field v-model="props.data.carteId" label="Card id" :class="{ 'error-input': isValidCarteId }"
+            <v-text-field v-model="props.data.carteId" label="Card id" 
+              :class="{ 'error-input' : isValidCarteId }"
               :style="{ 'border-color': isValidCarteId ? 'red' : '', 'border-radius': '5px' }"
-              :rules="[requiredValidator(props.data.carteId), lengthValidator(props.data.carteId, 50, 3)]"
+              :rules="[requiredValidator(props.data.carteId) , lengthValidator(props.data.carteId, 50, 3)]"
               @input="validateCarteId()">
             </v-text-field>
           </v-col>
@@ -604,11 +625,12 @@ function validateCIN() {
       </div>
 
       <div v-else-if="currentStep === 5">
+        {{ props.data.motivation }}
         <!-- Contenu de l'étape Motivation -->
         <div class="card-scene">
           <h5 class="my-1">- Please rank the following motivations in order of importance : :</h5>
           <v-row class="my-8" align="center" justify="space-around">
-            <Draggable :list="listDragAndDrop" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost"
+            <Draggable :list="props.data.motivation" :disabled="!enabled" item-key="name" class="list-group" ghost-class="ghost"
               :move="checkMove" @start="isDragging = true" @end="isDragging = false">
               <template #item="{ element }">
                 <v-btn class="my-2 mx-2 list-group-item" :class="{ 'not-draggable': !enabled }">
@@ -634,7 +656,7 @@ function validateCIN() {
         <v-row>
           <v-col>
             <v-text-field type="date" v-model="props.data.integrationDate" label="Date d'intégration"
-              :rules="[requiredValidator]"></v-text-field>
+            :rules="[requiredValidator , dateIntegrationValidator(props.data.integrationDate , props.data.dateBirth)]"></v-text-field>
           </v-col>
           <v-col>
             <v-text-field v-model="props.data.matricule" label="Matricule"></v-text-field>
@@ -648,8 +670,8 @@ function validateCIN() {
               :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>
-            <v-select v-model="props.data.position_id" :items="team_list" item-title="name" item-value="id" label="Équipe"
-              :rules="[requiredValidator]"></v-select>
+            <v-select v-model="props.data.team_id" :items="team_list" item-title="name" item-value="id"
+              label="Équipe"  :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
 
@@ -669,7 +691,7 @@ function validateCIN() {
             <v-btn @click="previousStep">Previous</v-btn>
           </v-col>
           <v-col class="text-right">
-            <v-btn @click="save()" :disabled="!validateStep6()">Save</v-btn>
+            <v-btn @click="emitupdate" :disabled="!validateStep6()">Save</v-btn>
           </v-col>
         </v-row>
       </div>

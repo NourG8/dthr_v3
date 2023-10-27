@@ -5,6 +5,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import vuetify from 'vite-plugin-vuetify'
+import Pages from 'vite-plugin-pages'
+import Layouts from 'vite-plugin-vue-layouts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,8 +20,15 @@ export default defineConfig({
         configFile: 'src/styles/variables/_vuetify.scss',
       },
     }),
+    Layouts(),
+    Pages({
+      // ℹ️ We need three routes using single routes so we will ignore generating route for this SFC file
+      onRoutesGenerated: routes => [
+        ...routes,
+      ],
+    }),
     Components({
-      dirs: ['src/@core/components'],
+      dirs: ['src/@core/components','src/components'],
       dts: true,
     }),
 

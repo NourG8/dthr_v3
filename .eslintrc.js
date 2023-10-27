@@ -39,6 +39,19 @@ module.exports = {
       multiline: 'below',
     }],
 
+    'import/no-unresolved': [
+      2,
+      {
+        ignore: [
+          '~pages$',
+          'virtual:generated-layouts',
+
+          // Ignore vite's ?raw imports
+          '.*?raw',
+        ],
+      },
+    ],
+
     'antfu/top-level-function': 'off',
 
     // indentation (Already present in TypeScript)

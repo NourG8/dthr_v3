@@ -41,8 +41,7 @@ export const useUserApi = createSharedComposable(() => {
   async function get_users() {
     loading.value = true
     try {
-      const { data } = await api.get<User>(`users`)
-
+      const { data } = await api.get<any>(`users`)
       return data
     }
     finally {
@@ -50,10 +49,10 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
-  async function get_user(id_user: number) {
+  async function get_archive_user() {
     loading.value = true
     try {
-      const { data } = await api.get<User>(`users/${id_user}`)
+      const { data } = await api.get<any>(`user/list/archive`)
 
       return data
     }
@@ -62,7 +61,6 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
-  
   async function store_user(payload: any) {
     loading.value = true
     try {
@@ -73,7 +71,7 @@ export const useUserApi = createSharedComposable(() => {
       loading.value = false
     }
   }
-  
+
   async function update_user(payload: any) {
     loading.value = true
     try {
@@ -88,7 +86,40 @@ export const useUserApi = createSharedComposable(() => {
   async function delete_user(payload: any) {
     loading.value = true
     try {
-      const { data } = await api.delete<any>(`users/${payload.id}`)
+      const { data } = await api.get<any>(`users/delete/${payload.id}`)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function archive_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.put<any>(`user/archive/${payload.id}`)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function unarchive_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.put<any>(`user/reset/${payload.id}`)
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function reset_pwd_user(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.put<any>(`admin/reset/password/${payload.id}`)
       return data
     }
     finally {
@@ -98,14 +129,14 @@ export const useUserApi = createSharedComposable(() => {
 
   async function login({ email, password }) {
     loading.value = true
-    
+
     try {
       //   let count = 0
       const { data } = await api.post<any>('login', {
         email,
         password,
       })
-      
+
       return data
     }
     finally {
@@ -217,7 +248,7 @@ export const useUserApi = createSharedComposable(() => {
 
     try {
       const { data } = await api.get<any>('me')
-      
+
       return data.data
     }
     finally {
@@ -236,12 +267,117 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
+  async function get_user_contracts(id_user: number) {
+    loading.value = true
+    try {
+      const { data } = await api.get<User>(`user/contract/${id_user}`)
+
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function get_user_contracts_model(id_user: number) {
+    loading.value = true
+    try {
+      const { data } = await api.get<User>(`users/model/${id_user}`)
+
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function get_user_contracts_signed(id_user: number) {
+    loading.value = true
+    try {
+      const { data } = await api.get<any>(`users/contract/${id_user}`)
+
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function affect_contract_user(payload: any) {
+    loading.value = true;
+    try {
+      const { data } = await api.post<any>(`affectContracts`, payload.contract, { responseType: 'blob' });
+
+      if (payload.contract.download != null) {
+        // Vérifiez si la réponse a des données avant de les déstructurer
+        if (data && data.data) {
+          const blob = new Blob([data.data], { type: 'application/pdf' })
+          const link = document.createElement('a')
+          link.href = URL.createObjectURL(blob)
+
+          if (payload.contract.download == 'word') {
+            link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".docx"
+          } else if (payload.contract.download == 'pdf') {
+            link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".pdf"
+          }
+
+          link.click()
+          URL.revokeObjectURL(link.href)
+        }
+      }
+      console.log(data);
+    } catch (error) {
+      console.error("Erreur lors de l'appel à l'API:", error);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function edit_contract_user(payload: any) {
+    let formData = new FormData();
+    formData.append('file', payload.contract.fileContract);
+    formData.append('contract_id', payload.contract.contract_id);
+    formData.append('user_id', payload.contract.user_id);
+    formData.append('startDate', payload.contract.startDate);
+    formData.append('endDate', payload.contract.endDate);
+    formData.append('salary', payload.contract.salary);
+    formData.append('status', payload.contract.status);
+    formData.append('raison', payload.contract.raison);
+    formData.append('placeOfWork', payload.contract.placeOfWork);
+    formData.append('startTimeWork', payload.contract.startTimeWork);
+    formData.append('endTimeWork', payload.contract.endTimeWork);
+    formData.append('trialPeriod', payload.contract.trialPeriod);
+
+    const { data } = await api.post<any>(`editContractUser/${payload.contract.id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+
+    if (payload.contract.download != null) {
+      const blob = new Blob([data.data], { type: 'application/pdf' })
+      const link = document.createElement('a')
+      link.href = URL.createObjectURL(blob)
+      if (payload.contract.download == 'word') {
+        link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".docx"
+      } else if (payload.contract.download == 'pdf') {
+        link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".pdf"
+      }
+      link.click()
+      URL.revokeObjectURL(link.href)
+    }
+  }
+
   return {
     get_users,
-    get_user,
     store_user,
     update_user,
     delete_user,
+    archive_user,
+    unarchive_user,
+    reset_pwd_user,
+    get_archive_user,
+    get_user_contracts,
+    get_user_contracts_model,
+    get_user_contracts_signed,
+    affect_contract_user,
+    edit_contract_user,
     logout,
     login,
     loading,
@@ -250,6 +386,6 @@ export const useUserApi = createSharedComposable(() => {
     resetPassword,
     me,
     verifCode,
-    updatePicture
+    updatePicture,
   } as const
 })
