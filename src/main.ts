@@ -13,6 +13,7 @@ import { createApp } from 'vue'
 import VOtpInput from "vue3-otp-input"
 import VueTelInput from 'vue3-tel-input'
 import 'vue3-tel-input/dist/vue3-tel-input.css'
+import 'notyf/notyf.min.css'; // for React, Vue and Svelte
 
 
 loadFonts()

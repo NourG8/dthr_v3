@@ -76,6 +76,55 @@ export const dateMin18Validator = (value: unknown) => {
   return !!String(value).trim().length || 'validators.min_date_error'
 }
 
+export const dateMin18Max100Validator = (value: unknown) => {
+  if (value != null) {
+    const date_now = moment()
+    const today = moment(date_now.format('YYYY-MM-DD'))
+    const min_date = moment(date_now.format('YYYY-MM-DD')).subtract(18, 'years').format('YYYY-MM-DD')
+    const max_date = moment(date_now.format('YYYY-MM-DD')).subtract(100, 'years').format('YYYY-MM-DD')
+    const inputDate = moment(value, 'YYYY-MM-DD')
+
+    if (inputDate.isAfter(min_date) || inputDate.isBefore(max_date)) {
+      return 'validators.date_range_error'
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error'
+}
+
+export const dateMinNowMax100Validator = (value: unknown) => {
+  if (value != null) {
+    const date_now = moment()
+    const min_date = moment(date_now.format('YYYY-MM-DD')).format('YYYY-MM-DD')
+    const max_date = moment(date_now.format('YYYY-MM-DD')).subtract(100, 'years').format('YYYY-MM-DD')
+    const inputDate = moment(value, 'YYYY-MM-DD')
+
+    if (inputDate.isAfter(min_date) || inputDate.isBefore(max_date)) {
+      return 'validators.date_range_error'
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error'
+}
+
+export const dateIntegrationValidator = (value: unknown, dateOfBirth: string) => {
+  if (value != null) {
+    const date_now = moment();
+    const min_date = moment(dateOfBirth, 'YYYY-MM-DD').add(18, 'years').format('YYYY-MM-DD');
+    const max_date = moment(date_now).add(1, 'months').format('YYYY-MM-DD');
+    const inputDate = moment(value, 'YYYY-MM-DD');
+
+    if (inputDate.isAfter(min_date) && inputDate.isBefore(max_date)) {
+      return true; // La date est valide
+    } else {
+      return 'validators.date_range_error';
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error';
+};
+
+
 export const timeMaxValidator = (date: string, time: string) => {
   // console.log(time)
 
@@ -215,11 +264,10 @@ export const alphaDashValidator = (value: unknown) => {
 
 export const vueTelInputValidator = (countryInfo: unknown) => {
   // Utilise les informations de countryInfo pour valider le numéro
-  if (countryInfo?.valid === true) {
-    return '';  // Numéro de téléphone valide, renvoie une chaîne vide
+  if (countryInfo?.valid === false) {
+    return 'Numero de telephone invalide !';
   }
-  
-  return 'Numero de telephone invalide !';
+    return '';  // Numéro de téléphone valide, renvoie une chaîne vide
 }
 
 export const validatePassportNumber = (value: string, carteId: unknown, cin: unknown, deliveryDateCin: unknown, deliveryPlaceCin: unknown, nationality : unknown) => {

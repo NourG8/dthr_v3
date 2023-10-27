@@ -1,5 +1,7 @@
 import { isUserLoggedIn } from '@/router/utils';
 import { createRouter, createWebHistory } from 'vue-router';
+import { setupLayouts } from 'virtual:generated-layouts'
+import routes from '~pages'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,10 @@ const router = createRouter({
           path: 'users',
           meta: { requiresAuth: true },
           component: () => import('../views/Users/usersList.vue'),
+        },
+        {
+          path: 'user/contracts/:id',
+          component: () => import('../views/Users/components/contractsList.vue'),
         },
         // {
         //   path: 'icons',
@@ -78,6 +84,7 @@ const router = createRouter({
 
       ],
     },
+    // ...setupLayouts(routes),
   ],
 })
 router.beforeEach((to, from, next) => {
