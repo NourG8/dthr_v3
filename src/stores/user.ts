@@ -121,13 +121,26 @@ export const useUser = defineStore('user', () => {
 
   async function affect_contract_user(payload: any) {
     const response = await api.affect_contract_user(payload);
-    console.log(response)
+    signed_contracts_list_user.value = response;
+  }
+
+  async function upload_old_file_contract(payload: any) {
+    const response = await api.upload_old_file_contract(payload);
     signed_contracts_list_user.value = response;
   }
 
   async function edit_contract_user(payload: any) {
     const response = await api.edit_contract_user(payload);
     signed_contracts_list_user.value = response;
+  }
+
+  async function delete_contract(payload: any) {
+    const response = await api.delete_contract(payload);
+
+    const index = signed_contracts_list_user.value.indexOf(payload)
+    signed_contracts_list_user.value.splice(index, 1)
+    console.log(signed_contracts_list_user.value)
+    console.log("response : ", response)
   }
 
   return {
@@ -146,7 +159,9 @@ export const useUser = defineStore('user', () => {
     get_user_contracts_signed,
     signed_contracts_list_user,
     affect_contract_user,
+    upload_old_file_contract,
     edit_contract_user,
+    delete_contract,
     list_user_count,
     users_list,
     users_list_archive,

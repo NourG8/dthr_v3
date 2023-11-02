@@ -25,7 +25,7 @@ export const requiredValidator = (value: unknown) => {
   if (isNullOrUndefined(value) || isEmptyArray(value) || value === false)
     return 'validators.obligatory_field'
 
-  return !!String(value).trim().length ||'validators.obligatory_field'
+  return !!String(value).trim().length || 'validators.obligatory_field'
 }
 
 export const requiredSpace = (value: unknown) => {
@@ -44,22 +44,25 @@ export const dateMaxValidator = (value: unknown) => {
       return 'validators.max_date_error'
   }
 
-  return !!String(value).trim().length ||'validators.max_date_error'
+  return !!String(value).trim().length || 'validators.max_date_error'
 }
 
-export const dateMinValidator = (value: unknown) => {
-  if (value != null) {
-    const date_now = moment()
-    const today = moment(date_now.format('YYYY-MM-DD'))
-    const inputDate = moment(value, 'YYYY-MM-DD')
+// export const dateMinValidator = (value: unknown, date: string) => {
+//   if (value != null) {
+//     // const date_now = moment()
+//     const min_date = moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
+//     const inputDate = moment(value, 'YYYY-MM-DD')
 
-    // console.log(inputDate.isBefore(today))
-    if (inputDate.isBefore(today))
-      return 'validators.min_date_error'
-  }
+//     console.log(min_date)
+//     console.log(inputDate)
 
-  return !!String(value).trim().length || 'validators.min_date_error'
-}
+//     // console.log(inputDate.isBefore(today))
+//     if (inputDate.isBefore(min_date))
+//       return 'validators.min_date_error'
+//   }
+//
+//   return !!String(value).trim().length || 'validators.min_date_error'
+// }
 
 export const dateMin18Validator = (value: unknown) => {
   if (value != null) {
@@ -124,6 +127,68 @@ export const dateIntegrationValidator = (value: unknown, dateOfBirth: string) =>
   return !!String(value).trim().length || 'validators.date_range_error';
 };
 
+export const dateMax100Validator = (value: unknown, dateMin: string) => {
+  if (value != null) {
+    const date_now = moment()
+    const min_date = moment(dateMin, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    const max_date = moment(date_now.format('YYYY-MM-DD')).add(100, 'years').format('YYYY-MM-DD')
+    const inputDate = moment(value, 'YYYY-MM-DD')
+
+    // console.log("max date : ", max_date)
+    // console.log("min date : ", min_date)
+    // console.log("input date : ", inputDate)
+
+    if (inputDate.isAfter(min_date) && inputDate.isBefore(max_date)) {
+      return true; // La date est valide
+    } else {
+      return 'validators.date_range_error';
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error'
+}
+
+export const dateBetweenValidator = (value: unknown, dateMin: string) => {
+  if (value != null) {
+    const date_now = moment();
+    const min_date = moment(dateMin, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    const max_date = moment(date_now).format('YYYY-MM-DD');
+    const inputDate = moment(value, 'YYYY-MM-DD');
+
+    // console.log("max date : ", max_date)
+    // console.log("min date : ", min_date)
+    // console.log("input date : ", inputDate)
+
+    if (inputDate.isAfter(min_date) && inputDate.isBefore(max_date)) {
+      return true; // La date est valide
+    } else {
+      return 'validators.date_range_error';
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error';
+};
+
+export const dateStatusContractValidator = (value: unknown, dateMin: string) => {
+  if (value != null) {
+    const date_now = moment();
+    const min_date = moment(dateMin, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    const max_date = moment(date_now).format('YYYY-MM-DD');
+    const inputDate = moment(value, 'YYYY-MM-DD');
+
+    // console.log("max date : ", max_date)
+    // console.log("min date : ", min_date)
+    // console.log("input date : ", inputDate)
+
+    if (inputDate.isSameOrAfter(min_date) && inputDate.isSameOrBefore(max_date)) {
+      return true; // La date est valide
+    } else {
+      return 'validators.date_range_error';
+    }
+  }
+
+  return !!String(value).trim().length || 'validators.date_range_error';
+};
 
 export const timeMaxValidator = (date: string, time: string) => {
   // console.log(time)
@@ -194,6 +259,7 @@ export const confirmedValidator = (value: string, target: string) => {
 // ðŸ‘‰ Between Validator
 export const betweenValidator = (value: unknown, min: number, max: number) => {
   const valueAsNumber = Number(value)
+  // console.log(valueAsNumber)
 
   return (Number(min) <= valueAsNumber && Number(max) >= valueAsNumber) || `validators.enter_number_between ${min} common.and ${max}`
 }
@@ -204,7 +270,7 @@ export const integerValidator = (value: unknown) => {
     return true
 
   if (Array.isArray(value))
-    return value.every(val => /^-?[0-9]+$/.test(String(val))) ||'validators.this_field_must_be_an_integer'
+    return value.every(val => /^-?[0-9]+$/.test(String(val))) || 'validators.this_field_must_be_an_integer'
 
   return /^-?[0-9]+$/.test(String(value)) || 'validators.this_field_must_be_an_integer'
 }
@@ -267,11 +333,11 @@ export const vueTelInputValidator = (countryInfo: unknown) => {
   if (countryInfo?.valid === false) {
     return 'Numero de telephone invalide !';
   }
-    return '';  // Numéro de téléphone valide, renvoie une chaîne vide
+  return '';  // Numéro de téléphone valide, renvoie une chaîne vide
 }
 
-export const validatePassportNumber = (value: string, carteId: unknown, cin: unknown, deliveryDateCin: unknown, deliveryPlaceCin: unknown, nationality : unknown) => {
-  if (nationality === 'Tunisienne' ) {
+export const validatePassportNumber = (value: string, carteId: unknown, cin: unknown, deliveryDateCin: unknown, deliveryPlaceCin: unknown, nationality: unknown) => {
+  if (nationality === 'Tunisienne') {
     return true;
   }
   // Le champ n'est pas valide

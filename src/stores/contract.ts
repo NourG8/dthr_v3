@@ -15,9 +15,19 @@ export const useContract = defineStore('contract', () => {
         }
     }
 
+    async function downloadModelContract(payload: any) {
+        const response = await api.downloadModelContract(payload);
+    }
+
+    async function downloadContractUser(payload: any) {
+        const response = await api.downloadContractUser(payload);
+    }
+
     return {
         loading: api.loading,
         get_contracts,
+        downloadModelContract,
+        downloadContractUser,
         contracts_list,
     } as const
 })
