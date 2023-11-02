@@ -30,9 +30,50 @@ export const useContractApi = createSharedComposable(() => {
       loading.value = false
     }
   }
-  
+
+  async function downloadModelContract(payload: any) {
+    loading.value = true;
+    try {
+      const { data } = await api.get<any>(`/user/download/old_contract/${payload.contract.id}`, { responseType: 'blob' });
+      
+      if (data) {
+        const blob = new Blob([data], { type: 'application/pdf' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + "_" + payload.user.firstName + ".docx"
+        link.click()
+        URL.revokeObjectURL(link.href)
+      }
+    } catch (error) {
+      console.error("Error", error);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function downloadContractUser(payload: any) {
+    loading.value = true;
+    try {
+      const { data } = await api.get<any>(`/user_contract/download/${payload.id}`, { responseType: 'blob' });
+
+        const blob = new Blob([data], { type: 'application/pdf' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = payload.fileContract
+        link.click()
+        URL.revokeObjectURL(link.href)
+
+    } catch (error) {
+      console.error("Error", error);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     get_contracts,
+    downloadModelContract,
+    downloadContractUser,
     loading
   } as const
 })

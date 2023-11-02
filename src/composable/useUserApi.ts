@@ -325,9 +325,28 @@ export const useUserApi = createSharedComposable(() => {
           URL.revokeObjectURL(link.href)
         }
       }
-      console.log(data);
     } catch (error) {
       console.error("Erreur lors de l'appel à l'API:", error);
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function upload_old_file_contract(payload: any) {
+    loading.value = true;
+    try {
+      let formData = new FormData();
+      formData.append('file', payload.file);
+      formData.append('contract_id', payload.contract.contract_id);
+      formData.append('startDate', payload.contract.startDate);
+      if (payload.contract.endDate != "") {
+        formData.append('endDate', payload.contract.endDate);
+      }
+
+      const { data } = await api.post<any>(`user/upload/old_contract/${payload.id_user}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+
+    } catch (error) {
+      console.error("Erreur", error);
     } finally {
       loading.value = false;
     }
@@ -342,11 +361,13 @@ export const useUserApi = createSharedComposable(() => {
     formData.append('endDate', payload.contract.endDate);
     formData.append('salary', payload.contract.salary);
     formData.append('status', payload.contract.status);
+    formData.append('date_status', payload.contract.date_status);
     formData.append('raison', payload.contract.raison);
     formData.append('placeOfWork', payload.contract.placeOfWork);
     formData.append('startTimeWork', payload.contract.startTimeWork);
     formData.append('endTimeWork', payload.contract.endTimeWork);
     formData.append('trialPeriod', payload.contract.trialPeriod);
+    formData.append('fileContract', payload.fileContract);
 
     const { data } = await api.post<any>(`editContractUser/${payload.contract.id}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
 
@@ -364,6 +385,18 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
+  async function delete_contract(payload: any) {
+    loading.value = true
+    try {
+      const { data } = await api.put<any>(`user_contract/delete/${payload.id}`)
+
+      return data
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
   return {
     get_users,
     store_user,
@@ -377,7 +410,9 @@ export const useUserApi = createSharedComposable(() => {
     get_user_contracts_model,
     get_user_contracts_signed,
     affect_contract_user,
+    upload_old_file_contract,
     edit_contract_user,
+    delete_contract,
     logout,
     login,
     loading,
