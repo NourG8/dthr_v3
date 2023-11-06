@@ -29,6 +29,11 @@ const router = createRouter({
           path: 'user/contracts/:id',
           component: () => import('../components/Users/components/contractsList.vue'),
         },
+        {
+          path: 'roles',
+          meta: { requiresAuth: true },
+          component: () => import('../components/Roles/components/rolesList.vue'),
+        },
         // {
         //   path: 'icons',
         //   component: () => import('../pages/icons.vue'),
