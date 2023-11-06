@@ -3,9 +3,9 @@ import DataTable from '@/components/dataTable/DataTable.vue';
 import { useNotyf } from '@/composable/useNotyf';
 import router from '@/router';
 import { useUser } from '@/stores/user';
-import userAdd from '@/views/Users/components/userAdd.vue';
-import userDetails from '@/views/Users/components/userDetails.vue';
-import userEdit from '@/views/Users/components/userEdit.vue';
+import userAdd from '@/components/Users/components/userAdd.vue'
+import userDetails from '@/components/Users/components/userDetails.vue';
+import userEdit from '@/components/Users/components/userEdit.vue';
 import Swal from 'sweetalert2';
 
 // Store user
