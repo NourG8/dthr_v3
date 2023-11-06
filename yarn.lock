@@ -5491,6 +5491,11 @@ vue3-tel-input@^1.0.4:
     user "^0.0.0"
     vue "^3.0.0-beta.1"
 
+vue3-tree-vue@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.npmjs.org/vue3-tree-vue/-/vue3-tree-vue-2.0.9.tgz#693095e942fe49738fd0bf51445a625d6e338dc7"
+  integrity sha512-u2dwi55OTeCfSl5pKNi3MgvaB+gl3a8o6mDXlQzIR7Q7vJhMUVmKOHpF6jMk85gpki1SLhs/gPlgQiyvGmuAkQ==
+
 vue@^3.0.0-beta.1, vue@^3.3.4:
   version "3.3.4"
   resolved "https://registry.npmjs.org/vue/-/vue-3.3.4.tgz#8ed945d3873667df1d0fcf3b2463ada028f88bd6"

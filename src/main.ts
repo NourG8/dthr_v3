@@ -16,6 +16,7 @@ import 'notyf/notyf.min.css'; // for React, Vue and Svelte
 import VOtpInput from "vue3-otp-input"
 import VueTelInput from 'vue3-tel-input'
 import 'vue3-tel-input/dist/vue3-tel-input.css'
+import 'vue3-tree-vue/dist/style.css'
 
 
 loadFonts()
@@ -27,7 +28,7 @@ const app = createApp(App)
 app.use(vuetify)
 app.use(createPinia())
 app.use(router)
-app.use(VueTelInput);
+app.use(VueTelInput);   
 app.component('VueDatePicker', VueDatePicker);
 // app.use(Draggable);*
 // app.component('draggable', Draggable)

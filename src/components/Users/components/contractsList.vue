@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useUser } from "@/stores/user";
+import { betweenValidator, dateBetweenValidator, dateMax100Validator, dateStatusContractValidator, requiredValidator } from '@/@core/utils/validators';
 import { useContract } from "@/stores/contract";
-import { dateIntegrationValidator, dateBetweenValidator, dateStatusContractValidator, dateMax100Validator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, betweenValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
-import Swal from 'sweetalert2';
+import { useUser } from "@/stores/user";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import Swal from 'sweetalert2';
 
 const { get_user_contracts, get_user, get_user_contracts_model, get_user_contracts_signed, affect_contract_user, upload_old_file_contract,
     edit_contract_user, delete_contract } = useUser();
@@ -75,7 +75,6 @@ onMounted(async () => {
     // console.log(signed_contracts_list_user.value)
 
 });
-
 
 async function AddContract() {
     add_contract.value = 1;
@@ -391,7 +390,6 @@ async function validateFormPhysicalContract(contract_id: any) {
         disabled_upload_contract.value = true
         return true
     } else {
-        // console.log("cas Error ")
         disabled_upload_contract.value = false
         return false
     }
@@ -562,7 +560,6 @@ function Deletecontract(item) {
     }).then(result => {
         if (result.isConfirmed) {
             delete_contract(item)
-            //   this.AfficherSignedContractUser()
             Swal.fire('contract deleted successfully')
             AfficherModelContractUser()
             get_user_contracts_signed(route.params.id)
@@ -575,7 +572,7 @@ function Deletecontract(item) {
 
 <template>
     <v-card>
-        <v-tabs background-color="transparent" color="basil" grow class="mb-4" v-model="tabs_contract">
+        <v-tabs background-color="transparent" color="basil" grow class="mb-4" height="60px" v-model="tabs_contract">
             <v-tab v-for="item in items_contract" :key="item">
                 {{ item }}
             </v-tab>
@@ -600,7 +597,6 @@ function Deletecontract(item) {
                             <v-row class="fill-height" align-content="center" justify="center">
                                 <v-col class="text-subtitle-1 text-center" cols="12">
                                     Msg Contract1
-                                    <!-- Loading {{ user.lastName }}'s contracts -->
                                 </v-col>
                                 <v-col cols="6">
                                     <v-progress-linear color="primary" indeterminate rounded height="6"></v-progress-linear>
@@ -617,8 +613,8 @@ function Deletecontract(item) {
 
                             <v-window v-model="tab" v-if="add_contract === 0">
                                 <v-window-item v-for="(item, c) in contracts_list_user" :key="c">
-                                    <v-card flat>
-                                        <v-card-text>
+                                    <v-card flat class="contract-card">
+                                        <v-card-text class="contract-info">
                                             <v-card-actions>
                                                 <b>Type Contracts : </b> Contracts "{{ item.type }}"
                                             </v-card-actions>
@@ -626,8 +622,7 @@ function Deletecontract(item) {
                                             <p class="ml-3">
                                                 <b>StartDate : </b>{{ item.startDate }}
                                             </p>
-                                            <p class="ml-3" v-if="item.endDate != null && item.endDate != '0000-00-00'
-                                                ">
+                                            <p class="ml-3" v-if="item.endDate != null && item.endDate != '0000-00-00'">
                                                 <b>EndDate : </b> {{ item.endDate }}
                                             </p>
                                             <p class="ml-3" v-if="item.trialPeriod != null">
@@ -644,31 +639,28 @@ function Deletecontract(item) {
                                                 <v-tooltip bottom v-if="item.file == null">
                                                     <template>
                                                         <v-btn color="primary" v-on="on" rounded depressed
-                                                            @click="downloadModelContractUser(item)">
+                                                            @click="downloadModelContractUser(item)"
+                                                            class="contract-button">
                                                             <v-icon left icon="mdi-cloud-arrow-down">
                                                             </v-icon>
-                                                            Contract_{{ item.type }}_{{ user?.lastName }}_{{
-                                                                user?.firstName
+                                                            Contract_{{ item.type }}_{{ user?.lastName }}_{{ user?.firstName
                                                             }}
                                                         </v-btn>
                                                     </template>
                                                     <span>Contract form not available</span>
                                                 </v-tooltip>
                                                 <v-btn v-if="item.file != null" color="primary" rounded depressed
-                                                    @click="downloadModelContractUser(item)">
+                                                    @click="downloadModelContractUser(item)" class="contract-button">
                                                     <v-icon left icon="mdi-cloud-arrow-down"> </v-icon>
                                                     <b class="ml-2">
-                                                        Contract_{{ item.type }}_{{ user.lastName }}_{{
-                                                            user.firstName
-                                                        }}</b>
+                                                        Contract_{{ item.type }}_{{ user.lastName }}_{{ user.firstName }}
+                                                    </b>
                                                 </v-btn>
                                                 <input ref="uploader" class="d-none" type="file" accept="image/*" />
-                                                <v-btn v-if="item.status == 'Draft' ||
-                                                        item.status == 'Edited' ||
-                                                        item.status == 'Delivered' ||
-                                                        item.status == 'Signed'
-                                                        " color="#00695C" class="ml-5" rounded depressed outlined
-                                                    @click="editContract(item)">
+                                                <v-btn
+                                                    v-if="item.status == 'Draft' || item.status == 'Edited' || item.status == 'Delivered' || item.status == 'Signed'"
+                                                    color="#ABE188" class="ml-3 pl-7 pr-7 contract-button" rounded depressed
+                                                    outlined @click="editContract(item)">
                                                     <v-icon left icon="mdi-pencil "> </v-icon>
                                                     Edit
                                                 </v-btn>
@@ -694,8 +686,7 @@ function Deletecontract(item) {
                                         (editedIndex === 1 &&
                                             (editedItemC.status === 'Draft' ||
                                                 editedItemC.status === 'Edited' ||
-                                                editedItemC.status === 'Delivered'))
-                                        ">
+                                                editedItemC.status === 'Delivered'))">
                                         <v-col cols="12" md="4">
                                             <v-select v-model="editedItemC.contract_id" :items="contracts_list"
                                                 item-title="type" item-value="id" label="TypeContract"
@@ -722,8 +713,7 @@ function Deletecontract(item) {
                                         (editedIndex === 1 &&
                                             (editedItemC.status === 'Draft' ||
                                                 editedItemC.status === 'Edited' ||
-                                                editedItemC.status === 'Delivered'))
-                                        ">
+                                                editedItemC.status === 'Delivered'))">
                                         <v-col cols="12" md="4">
                                             <v-text-field required v-model="editedItemC.placeOfWork" label="PlaceOfWork"
                                                 type="text" outlined dense placeholder="PlaceOfWork"
@@ -766,8 +756,7 @@ function Deletecontract(item) {
                                     </v-row>
 
                                     <v-row v-if="editedIndex === -1 || (editedIndex === 1 && (editedItemC.status === 'Draft' || editedItemC.status === 'Edited' ||
-                                        editedItemC.status === 'Delivered'))
-                                        ">
+                                        editedItemC.status === 'Delivered'))">
                                         <v-col cols="12" md="6">
                                             <VCard title="Add start time of work"
                                                 :height="select_timepicker === true ? 550 : 'auto'">
@@ -877,11 +866,6 @@ function Deletecontract(item) {
                         </v-btn>
                     </v-card-actions>
                 </div>
-                <!-- <div v-if="signed_contracts_list_user == null && upload_image == false">
-                    <v-alert dense outlined type="warning" class="ml-5 mr-5">
-                        MsgContract
-                    </v-alert>
-                </div> -->
 
                 <v-form ref="'formContract'" v-if="upload_image == true" class="mt-1 pt-2 pl-5 pr-5">
                     <span class="v-card__title"> Charger Contract</span>
@@ -924,7 +908,8 @@ function Deletecontract(item) {
                                 <br />
                                 <v-icon v-if="!image" icon="mdi-cloud-upload" size="200" tile class="profile ml-3"></v-icon>
                                 <br />
-                                <span v-if="!image" style="font-size: 18px;color:#909FB2">Drag and Drop contract here</span><br />
+                                <span v-if="!image" style="font-size: 18px;color:#909FB2">Drag and Drop contract
+                                    here</span><br />
                                 <span v-if="!image" style="font-size: 18px;color:#000000">Or</span>
                                 <br v-if="!image" />
                                 <div class="helper"></div>
@@ -1005,52 +990,6 @@ function Deletecontract(item) {
 
   
 <style scoped>
-.content {
-    display: flex !important;
-    justify-content: center !important;
-}
-
-.flip-list-move {
-    transition: transform 0.5s;
-}
-
-.no-move {
-    transition: transform 0s;
-}
-
-.ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
-}
-
-.list-group {
-    min-height: 20px;
-}
-
-.list-group-item {
-    cursor: move;
-}
-
-.list-group-item i {
-    cursor: pointer;
-}
-
-.swal2-styled.swal2-confirm {
-    background-color: #3085d6;
-}
-
-.swal2-styled.swal2-confirm:focus {
-    box-shadow: 0 0 0 3px #8ab7ea !important;
-}
-
-.v-avatar .img,
-.v-avatar svg,
-.v-avatar .v-icon,
-.v-avatar .v-image,
-.v-avatar .v-responsive__content {
-    padding: 20px !important;
-}
-
 .btn {
     background-color: #0078fe;
     border: 0;
@@ -1096,15 +1035,6 @@ input[type="file"] {
     vertical-align: middle;
 }
 
-.img {
-    border: 1px solid #f6f6f6;
-    display: inline-block;
-    height: auto;
-    max-height: 80%;
-    max-width: 80%;
-    width: auto;
-}
-
 .drop {
     background-color: #e4ebf0;
     border: 4px dashed;
@@ -1114,6 +1044,17 @@ input[type="file"] {
     max-height: 400px;
     max-width: 800px;
     width: 100%;
+}
+.contract-card {
+    margin-left: 3px;
+}
+
+.contract-info {
+    margin-left: 3px;
+}
+
+.contract-button {
+    margin-left: 3px;
 }
 </style>
   
