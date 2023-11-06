@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
+import roleDetails from '@/components/Roles/components/roleDetails.vue';
 import { useNotyf } from '@/composable/useNotyf';
 import { useRole } from '@/stores/role';
-import roleDetails from '@/components/Roles/components/roleDetails.vue';
 // Store role
 const { get_roles } = useRole()
 const { roles_list } = storeToRefs(useRole())
@@ -38,6 +38,15 @@ function closeDetails() {
   dialogDetails.value = false
 }
 
+const dialogAdd = ref(false)
+function AddRole() {
+  dialogAdd.value = true
+}
+
+function closeAdd() {
+  dialogAdd.value = false
+}
+
 </script>
 
 <template>
@@ -62,6 +71,26 @@ function closeDetails() {
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="dialogAdd" max-width="1500px">
+      <v-card flat class="pa-3 mt-2">
+        <v-card-title class="text-h5 mb-5"> Add role </v-card-title>
+        <v-card-text>
+          <roleAdd @save="save"></roleAdd>
+          <v-row>
+            <v-col cols="12">
+              <v-card-actions>
+                <span></span>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" outlined class="mt-4" type="reset" @click="closeAdd()">
+                  Cancel
+                </v-btn>
+              </v-card-actions>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <DataTable :columns="columns" :rows="archive === true ? roles_list_archive : roles_list" :with-action="true">
 
     <template #role="data" >
@@ -71,8 +100,9 @@ function closeDetails() {
     <template #button-data>
       <VMenu>
         <template #activator="{ props }">
-          <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-plus-thick" @click="AddUser" v-if="archive === false">
-            Add user
+          <!-- v-if="archive === false" -->
+          <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-plus-thick" @click="AddRole">
+            Add role
           </VBtn>
           <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-account-multiple-plus"
             @click="AddPartner"  v-if="archive === false">
@@ -101,7 +131,7 @@ function closeDetails() {
       </VTooltip>
       <VTooltip :text="'edit'" location="bottom" >
         <template #activator="{ props }">
-          <VBtn v-bind="props" variant="outlined" color="primary" size="small" @click="updateUser(activity.data)">
+          <VBtn v-bind="props" variant="outlined" color="primary" size="small" @click="updateRole(activity.data)">
             <VIcon size="24" icon="mdi-account-edit" />
           </VBtn>
         </template>
@@ -109,7 +139,7 @@ function closeDetails() {
       <VTooltip :text="'permissions'" location="bottom">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
-            @click="contractUser(activity.data)">
+            @click="contractRole(activity.data)">
             <VIcon size="24" icon="mdi-account-key" />
           </VBtn>
         </template>
@@ -117,7 +147,7 @@ function closeDetails() {
       <VTooltip :text="'archive'" location="bottom" >
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
-            @click="archiveUser(activity.data)">
+            @click="archiveRole(activity.data)">
             <VIcon size="24" icon="mdi-account-cancel" />
           </VBtn>
         </template>
@@ -125,7 +155,7 @@ function closeDetails() {
       <VTooltip :text="'delete'" location="bottom"  >
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
-            @click="deleteUser(activity.data)">
+            @click="deleteRole(activity.data)">
             <VIcon size="24" icon="mdi-account-remove" />
           </VBtn>
         </template>
