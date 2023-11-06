@@ -1,7 +1,5 @@
 import { isUserLoggedIn } from '@/router/utils';
 import { createRouter, createWebHistory } from 'vue-router';
-import { setupLayouts } from 'virtual:generated-layouts'
-import routes from '~pages'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,11 +23,11 @@ const router = createRouter({
         {
           path: 'users',
           meta: { requiresAuth: true },
-          component: () => import('../views/Users/usersList.vue'),
+          component: () => import('../views/Users/index.vue'),
         },
         {
           path: 'user/contracts/:id',
-          component: () => import('../views/Users/components/contractsList.vue'),
+          component: () => import('../components/Users/components/contractsList.vue'),
         },
         // {
         //   path: 'icons',
@@ -55,7 +53,7 @@ const router = createRouter({
       children: [
         {
           path: 'login',
-          name: 'login', 
+          name: 'login',
           component: () => import('../pages/login.vue'),
         },
         {
@@ -64,17 +62,17 @@ const router = createRouter({
         },
         {
           path: 'forgot-password',
-          name: 'forgot-password', 
+          name: 'forgot-password',
           component: () => import('../pages/forgot-password.vue'),
         },
         {
           path: 'verification-codes',
-          name: 'verification-codes', 
+          name: 'verification-codes',
           component: () => import('../pages/verification-codes.vue'),
         },
         {
           path: 'reset-password',
-          name: 'reset-password', 
+          name: 'reset-password',
           component: () => import('../pages/reset-password.vue'),
         },
         {
@@ -89,15 +87,15 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   const isLoggedIn = isUserLoggedIn()
-  
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-      if (isLoggedIn) {
-          next();
-          return;
-      }
-      next("/");
-  } else {
+    if (isLoggedIn) {
       next();
+      return;
+    }
+    next("/");
+  } else {
+    next();
   }
 });
 
