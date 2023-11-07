@@ -11,7 +11,7 @@ const { get_user_contracts, get_user, get_user_contracts_model, get_user_contrac
 const { contracts_list_user, users_list, signed_contracts_list_user, user } = storeToRefs(useUser());
 
 const { get_contracts, downloadContractUser, downloadModelContract } = useContract();
-const { contracts_list } = storeToRefs(useContract());
+const { contracts_list, loading } = storeToRefs(useContract());
 
 const route = useRoute();
 const tab = ref(0);
@@ -571,7 +571,11 @@ function Deletecontract(item) {
 </script>
 
 <template>
-    <v-card>
+<VCard min-height="250px" >
+      <!-- <div class="text-center mt-9" v-if="loading" >
+            <v-progress-circular :indeterminate="true" color="primary"></v-progress-circular>
+        </div> -->
+    <div >
         <v-tabs background-color="transparent" color="basil" grow class="mb-4" height="60px" v-model="tabs_contract">
             <v-tab v-for="item in items_contract" :key="item">
                 {{ item }}
@@ -985,7 +989,8 @@ function Deletecontract(item) {
                 </div>
             </v-window-item>
         </v-window>
-    </v-card>
+    </div>
+</VCard>
 </template>
 
   

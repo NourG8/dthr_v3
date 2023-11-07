@@ -23,7 +23,7 @@ const router = createRouter({
         {
           path: 'users',
           meta: { requiresAuth: true },
-          component: () => import('../views/Users/index.vue'),
+          component: () => import('../components/Users/usersList.vue'),
         },
         {
           path: 'user/contracts/:id',

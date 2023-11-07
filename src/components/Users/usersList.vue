@@ -3,7 +3,7 @@ import DataTable from '@/components/dataTable/DataTable.vue';
 import { useNotyf } from '@/composable/useNotyf';
 import router from '@/router';
 import { useUser } from '@/stores/user';
-import userAdd from '@/components/Users/components/userAdd.vue'
+import userAdd from '@/components/Users/components/userAdd.vue';
 import userDetails from '@/components/Users/components/userDetails.vue';
 import userEdit from '@/components/Users/components/userEdit.vue';
 import Swal from 'sweetalert2';
@@ -299,8 +299,12 @@ async function contractUser(item : any) {
         </v-card-text>
       </v-card>
     </v-dialog>
+    <VCard min-height="250px" >
+    <div class="text-center mt-9" v-if="loading" >
+            <v-progress-circular :indeterminate="true" color="primary"></v-progress-circular>
+    </div>
 
-    <DataTable :columns="columns" :rows="archive === true ? users_list_archive : users_list" :with-action="true">
+    <DataTable v-else :columns="columns" :rows="archive === true ? users_list_archive : users_list" :with-action="true">
       <template #image="data">
         <v-avatar size="50" class="ma-2">
           <img src="@/assets/images/avatars/profil.png" alt="John" style="width: 100%; height: 100%;" />
@@ -326,10 +330,10 @@ async function contractUser(item : any) {
             <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-plus-thick" @click="AddUser" v-if="archive === false">
               Add user
             </VBtn>
-            <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-account-multiple-plus"
+            <!-- <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-account-multiple-plus"
               @click="AddPartner"  v-if="archive === false">
               Add multiple users
-            </VBtn>
+            </VBtn> -->
             <VBtn class="ml-2 text-capitalize" color="primary" prepend-icon="mdi-account-multiple-remove"
               @click="list_archive_users"  v-if="archive === false">
               Inactive Users List
@@ -400,6 +404,8 @@ async function contractUser(item : any) {
         </VTooltip>
       </template>
     </DataTable>
+    
+    </VCard>
   </div>
 </template>
   

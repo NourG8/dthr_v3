@@ -6,13 +6,11 @@ const { get_roles_positions_user } = useRole()
 const { roles_positions_list } = storeToRefs(useRole())
 
 const dialogDetails = ref(false)
+const tab = ref(roles_positions_list?.value[0]?.name)
 
 interface Props {
     data: any;
 }
-
-const tab = ref(roles_positions_list?.value[0]?.name)
-
 const props = withDefaults(defineProps<Props>(), {});
 
 onMounted(async () => {

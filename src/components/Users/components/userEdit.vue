@@ -625,7 +625,7 @@ const emitupdate = () => {
       </div>
 
       <div v-else-if="currentStep === 5">
-        {{ props.data.motivation }}
+        <!-- {{ props.data.motivation }} -->
         <!-- Contenu de l'étape Motivation -->
         <div class="card-scene">
           <h5 class="my-1">- Please rank the following motivations in order of importance : :</h5>
