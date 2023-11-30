@@ -67,7 +67,7 @@ const local_logout = () => {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              {{userData.lastName}}   {{userData.lastName}} 
+              {{userData.last_name}}   {{userData.last_name}} 
             </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>

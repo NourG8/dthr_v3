@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const firstName = ref('')
+const first_name = ref('')
 const email = ref('')
 const mobile = ref<number>()
 const password = ref<string>()
@@ -11,7 +11,7 @@ const checkbox = ref(false)
     <VRow>
       <VCol cols="12">
         <VTextField
-          v-model="firstName"
+          v-model="first_name"
           prepend-inner-icon="bx-user"
           label="First Name"
           placeholder="John"

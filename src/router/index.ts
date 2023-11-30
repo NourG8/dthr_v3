@@ -34,6 +34,11 @@ const router = createRouter({
           meta: { requiresAuth: true },
           component: () => import('../components/Roles/components/rolesList.vue'),
         },
+        {
+          path: 'permissions',
+          meta: { requiresAuth: true },
+          component: () => import('../components/Permissions/components/permissionsList.vue'),
+        },
         // {
         //   path: 'icons',
         //   component: () => import('../pages/icons.vue'),

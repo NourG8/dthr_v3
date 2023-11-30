@@ -11,6 +11,7 @@ export const useCompany = defineStore('company', () => {
       const response = await api.get_companies();
       companies_list.value = response[0];
       localStorage.setItem('companyData', JSON.stringify(companies_list.value))
+      console.log(companies_list.value)
     } catch (error) {
       console.error(error);
     }

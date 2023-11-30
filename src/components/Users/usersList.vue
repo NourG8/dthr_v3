@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import userAdd from '@/components/Users/components/userAdd.vue';
+import userDetails from '@/components/Users/components/userDetails.vue';
+import userEdit from '@/components/Users/components/userEdit.vue';
 import DataTable from '@/components/dataTable/DataTable.vue';
 import { useNotyf } from '@/composable/useNotyf';
 import router from '@/router';
 import { useUser } from '@/stores/user';
-import userAdd from '@/components/Users/components/userAdd.vue';
-import userDetails from '@/components/Users/components/userDetails.vue';
-import userEdit from '@/components/Users/components/userEdit.vue';
 import Swal from 'sweetalert2';
 
 // Store user
@@ -20,42 +20,42 @@ onMounted(() => {
 
 const columns = ref([
   { text: '', value: 'image' },
-  { text: 'lastName', value: 'lastName' },
-  { text: 'firstName', value: 'firstName' },
+  { text: 'last_name', value: 'last_name' },
+  { text: 'first_name', value: 'first_name' },
   { text: 'email', value: 'email' },
-  { text: 'professional email', value: 'emailProf' },
+  { text: 'professional email', value: 'email_prof' },
   { text: 'Address', value: 'address' },
   { text: 'phone', value: 'phone' },
-  { text: 'matricule', value: 'matricule' }
+  { text: 'registration', value: 'registration' }
 ])
 
 const editedItem = ref<any>({
   id: null,
-  lastName: '',
+  last_name: '',
   email: '',
-  firstName: '',
-  emailProf: '',
+  first_name: '',
+  email_prof: '',
   address: '',
   phone: '',
-  matricule: '',
+  registration: '',
   sex: '',
-  dateBirth: '',
-  placeBirth: '',
+  date_birth: '',
+  place_birth: '',
   status: '',
   nationality: '',
-  phoneEmergency: '',
-  familySituation: '',
-  nbChildren: null,
-  levelStudies: '',
+  phone_emergency: '',
+  family_situation: '',
+  nb_children: null,
+  level_studies: '',
   specialty: '',
   sivp: '',
-  carteId: '',
-  durationSivp: '',
+  carte_id: '',
+  duration_sivp: '',
   cin: '',
   deleveryDateCin: '',
   deleveryPlaceCin: '',
-  numPassport: '',
-  integrationDate: ''
+  num_passport: '',
+  integration_date: ''
 })
 
 const dialogDetails = ref(false)
@@ -77,13 +77,11 @@ function closeAdd() {
 function detailsUser(item: any) {
   editedItem.value = Object.assign({}, item)
   dialogDetails.value = true
-  console.log(editedItem.value)
 }
 
 function updateUser(item: any) {
   editedItem.value = Object.assign({}, item)
   dialogEdit.value = true
-  console.log(editedItem.value)
 }
 
 function AddUser() {
@@ -110,7 +108,6 @@ function save(item: any) {
     if (result.isConfirmed) {
       dialogAdd.value = false
       await store_user(item).then(res => {
-        console.log(res)
         get_users()
         notyf.success('user succes add')
       })
@@ -131,7 +128,6 @@ function update(item: any) {
     if (result.isConfirmed) {
       dialogAdd.value = false
       await update_user(item).then(res => {
-        console.log(res)
         get_users()
         notyf.success('user succes update')
       })
@@ -220,13 +216,13 @@ const archive = ref(false)
 async function list_archive_users() {
   archive.value = true
   await get_archive_users();
-  console.log(users_list_archive.value)
+  // console.log(users_list_archive.value)
 }
 
 async function list_users() {
   archive.value = false
   await get_users();
-  console.log(users_list.value)
+  // console.log(users_list.value)
 }
 
 async function contractUser(item : any) {
@@ -240,7 +236,7 @@ async function contractUser(item : any) {
   <div>
     <v-dialog v-model="dialogDetails" max-width="850px">
       <v-card flat class="pa-3 mt-2">
-        <v-card-title class="text-h5 mb-5"> DetailsUser ({{ editedItem.lastName }} {{ editedItem.firstName
+        <v-card-title class="text-h5 mb-5"> DetailsUser ({{ editedItem.last_name }} {{ editedItem.first_name
         }})</v-card-title>
         <v-card-text>
           <userDetails :data="editedItem"></userDetails>
@@ -261,7 +257,7 @@ async function contractUser(item : any) {
 
     <v-dialog v-model="dialogEdit" max-width="1500px">
       <v-card flat class="pa-3 mt-2">
-        <v-card-title class="text-h5 mb-5"> Update User ({{ editedItem.lastName }} {{ editedItem.firstName
+        <v-card-title class="text-h5 mb-5"> Update User ({{ editedItem.last_name }} {{ editedItem.first_name
         }})</v-card-title>
         <v-card-text>
           <userEdit :data="editedItem" @update="update"></userEdit>

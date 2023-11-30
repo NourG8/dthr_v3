@@ -10,8 +10,8 @@ const tab = ref('')
 onMounted(async () => { 
   await get_user(route.params.id)
   await get_user_contracts(route.params.id)
-  console.log(user.value)
-  console.log(contracts_list_user.value)
+  // console.log(user.value)
+  // console.log(contracts_list_user.value)
 });
 
 </script>
@@ -40,7 +40,7 @@ onMounted(async () => {
                 <v-card-text class="pt-3 ml-15">
                   <v-row>
                     <v-col cols="12" md="5">
-                      <label for="firstname" class="ml-5">
+                      <label for="first_name" class="ml-5">
                         <b>Type Contracts : </b>
                       </label>
                     </v-col>
@@ -48,7 +48,7 @@ onMounted(async () => {
                   </v-row>
                   <v-row>
                     <v-col cols="12" md="5">
-                      <label for="firstname" class="ml-5">
+                      <label for="first_name" class="ml-5">
                         <b>StartDate : </b>
                       </label>
                     </v-col>
@@ -58,7 +58,7 @@ onMounted(async () => {
                   </v-row>
                   <v-row>
                     <v-col cols="12" md="5">
-                      <label for="firstname" class="ml-5">
+                      <label for="first_name" class="ml-5">
                         <b>EndDate : </b>
                       </label>
                     </v-col>
@@ -69,7 +69,7 @@ onMounted(async () => {
                   </v-row>
                   <v-row>
                     <v-col cols="12" md="5">
-                      <label for="firstname" class="ml-5">
+                      <label for="first_name" class="ml-5">
                         <b>TrialPeriod : </b>
                       </label>
                     </v-col>
@@ -80,7 +80,7 @@ onMounted(async () => {
                   </v-row>
                   <v-row>
                     <v-col cols="12" md="4">
-                      <label for="firstname" class="ml-5">
+                      <label for="first_name" class="ml-5">
                         <b>Status :</b>
                       </label>
                     </v-col>
@@ -118,7 +118,7 @@ onMounted(async () => {
                       <v-icon left>
                         cloud_download
                       </v-icon>
-                     Contract_{{ item.type }}_{{ user?.lastName }}_{{ user?.firstName }}
+                     Contract_{{ item.type }}_{{ user?.last_name }}_{{ user?.first_name }}
                     </v-btn>
                     <input ref="uploader" class="d-none" type="file" accept="image/*" />
                   </p>

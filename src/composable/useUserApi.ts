@@ -18,16 +18,16 @@ const router = useRouter()
 
 export interface User {
   id: number
-  lastName: string
-  firstName: string
+  last_name: string
+  first_name: string
   image: string
   sex: string
   address: string
   role: string
   nationality: string
   gender: string
-  dateBirth: Date
-  placeBirth: string
+  date_birth: Date
+  place_birth: string
   status: string
   email: string
   password: string
@@ -58,6 +58,17 @@ export const useUserApi = createSharedComposable(() => {
     }
     finally {
       loading.value = false
+    }
+  }
+
+  async function check_user_data(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-data`, payload)
+
+      return data
+    }
+    finally {
+     
     }
   }
 
@@ -316,9 +327,9 @@ export const useUserApi = createSharedComposable(() => {
           link.href = URL.createObjectURL(blob)
 
           if (payload.contract.download == 'word') {
-            link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".docx"
+            link.download = "contract_" + payload.contract.type + "_" + payload.user.last_name + payload.user.first_name + ".docx"
           } else if (payload.contract.download == 'pdf') {
-            link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".pdf"
+            link.download = "contract_" + payload.contract.type + "_" + payload.user.last_name + payload.user.first_name + ".pdf"
           }
 
           link.click()
@@ -376,9 +387,9 @@ export const useUserApi = createSharedComposable(() => {
       const link = document.createElement('a')
       link.href = URL.createObjectURL(blob)
       if (payload.contract.download == 'word') {
-        link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".docx"
+        link.download = "contract_" + payload.contract.type + "_" + payload.user.last_name + payload.user.first_name + ".docx"
       } else if (payload.contract.download == 'pdf') {
-        link.download = "contract_" + payload.contract.type + "_" + payload.user.lastName + payload.user.firstName + ".pdf"
+        link.download = "contract_" + payload.contract.type + "_" + payload.user.last_name + payload.user.first_name + ".pdf"
       }
       link.click()
       URL.revokeObjectURL(link.href)
@@ -422,5 +433,6 @@ export const useUserApi = createSharedComposable(() => {
     me,
     verifCode,
     updatePicture,
+    check_user_data
   } as const
 })

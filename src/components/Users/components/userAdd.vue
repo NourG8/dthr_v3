@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { Validation, dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, phoneExistsValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
 import { useCompany } from '@/stores/company';
 import { useDepartment } from '@/stores/department';
 import { usePosition } from '@/stores/position';
@@ -18,47 +18,48 @@ const { get_companies } = useCompany()
 const { companies_list } = storeToRefs(useCompany())
 
 // Store user
-const { get_users, store_user } = useUser()
-const { users_list, loading } = storeToRefs(useUser())
-
+const { get_users, store_user , check_user_data} = useUser()
+const { users_list, check_user , check_email , loading } = storeToRefs(useUser())
 
 const editedItem = reactive({
   // Les champs de la première étape
   id : '',
-  lastName: '',
-  firstName: '',
-  dateBirth: '',
-  placeBirth: '',
+  last_name: '',
+  first_name: '',
+  date_birth: '',
+  place_birth: '',
   sex: null,
   // Les champs de la deuxième étape
   address: '',
   email: '',
-  emailProf: '',
+  email_prof: '',
   phone: '',
-  phoneEmergency: '',
+  phone_emergency: '',
   // Les champs de la troisieme étape
-  familySituation: '',
-  nbChildren: '',
+  family_situation: '',
+  nb_children: '',
   // Les champs de la cinquieme étape
-  numPassport: '',
+  num_passport: '',
   nationality: '',
   cin: '',
-  carteId:'',
-  deliveryDateCin: '',
-  deliveryPlaceCin: '',
+  carte_id:'',
+  delivery_date_cin: '',
+  delivery_place_cin: '',
 
   specialty: '',
-  levelStudies: '',
+  level_studies: '',
   //Les champs de la derniere étape
-  integrationDate: '',
-  matricule: '',
+  integration_date: '',
+  registration: '',
   team: null,
-  regimeSocial: null,
+  regime_social: null,
 
   team_id: '',
   department_id: '',
   text : '',
-  motivation : ''
+  motivation : '',
+
+  position_id : null
 });
 
 const emit = defineEmits(['save'])
@@ -73,23 +74,26 @@ onMounted(async () => {
   // console.log("position : ",positions_list.value)
   get_departments()
   // console.log("department : ",departments_list.value)
-  updateTeamList()
 
   await get_companies()
-  await getRegimeSocial()
+  await getregime_social()
   // console.log(company.value.max_cin)
   getCinAndPassportArray()
+  await updateTeamList()
+  console.log(team_list.value)
+  console.log(departments_list.value)
 
   editedItem.nationality = company.value.nationality
+  editedItem.motivation = listDragAndDrop.value
 });
 
 const company = ref()
-const regimeSocialOptions = ref([]);
+const regime_socialOptions = ref([]);
 const nationality = ref()
-async function getRegimeSocial() {
+async function getregime_social() {
   company.value = JSON.parse(localStorage.getItem('companyData'));
   nationality.value = company.value.nationality;
-  regimeSocialOptions.value = JSON.parse(company.value.regimeSocial)
+  regime_socialOptions.value = JSON.parse(company.value.regime_social)
 }
 
 function getCinAndPassportArray() {
@@ -98,10 +102,10 @@ function getCinAndPassportArray() {
   }else{
     editedItem.cin = String("")
   }
-  if (editedItem.numPassport) {
-    editedItem.numPassport = String(editedItem.numPassport)
+  if (editedItem.num_passport) {
+    editedItem.num_passport = String(editedItem.num_passport)
   }else{
-    editedItem.numPassport = String("")
+    editedItem.num_passport = String("")
   }
 }
 
@@ -142,16 +146,16 @@ function checkMove(e){
 }
 
 function isCardIdAndCinRequired() {
-  validateNumPassport()
-  validateCarteId()
+  validatenum_passport()
+  validatecarte_id()
   validateCIN()
 
   if(editedItem.nationality !== nationality.value){
    editedItem.cin = ''
-   editedItem.deliveryDateCin = ''
-   editedItem.deliveryPlaceCin = ''
+   editedItem.delivery_date_cin = ''
+   editedItem.delivery_place_cin = ''
   }else{
-    editedItem.carteId = ''
+    editedItem.carte_id = ''
   }
 
   return editedItem.nationality !== nationality.value
@@ -193,8 +197,8 @@ function previousStep() {
   }
 }
 
-const sexOptions = ['Women', 'Man'];
-const familySituationOptions = ['Married', 'Divorced', 'Single'];
+const sexOptions = ['Female', 'Male'];
+const family_situationOptions = [ 'Single','Married', 'Divorce', 'Widow'];
 const isDragging = ref(false)
 
 const departmentOptions = ['Département 1', 'Département 2', 'Département 3']; // Remplace avec tes options réelles
@@ -202,53 +206,53 @@ const teamOptions = ['Équipe 1', 'Équipe 2', 'Équipe 3']; // Remplace avec te
 
 function validateStep0() {
   return (
-    requiredValidator(editedItem.lastName) === true &&
-    lengthValidator(editedItem.lastName, 15, 3) === true &&
-    requiredValidator(editedItem.firstName) === true &&
-    lengthValidator(editedItem.firstName, 15, 3) === true &&
-    requiredValidator(editedItem.placeBirth) === true &&
-    lengthValidator(editedItem.placeBirth, 15, 3) === true &&
+    requiredValidator(editedItem.last_name) === true &&
+    lengthValidator(editedItem.last_name, 30, 3) === true &&
+    requiredValidator(editedItem.first_name) === true &&
+    lengthValidator(editedItem.first_name, 30, 3) === true &&
+    requiredValidator(editedItem.place_birth) === true &&
+    lengthValidator(editedItem.place_birth, 30, 3) === true &&
     requiredValidator(editedItem.sex) === true &&
-    requiredValidator(editedItem.dateBirth) === true &&
-    dateMin18Max100Validator(editedItem.dateBirth) === true)
+    requiredValidator(editedItem.date_birth) === true &&
+    dateMin18Max100Validator(editedItem.date_birth) === true)
 }
 
 function validateStep1() {
   return (
     requiredValidator(editedItem.address) === true &&
-    lengthValidator(editedItem.address, 15, 3) === true &&
+    lengthValidator(editedItem.address, 30, 3) === true &&
     requiredValidator(editedItem.email) === true &&
     emailValidator(editedItem.email) === true &&
-    emailValidator(editedItem.emailProf) === true &&
-    editedItem.phone != ''&& editedItem.phoneEmergency &&
+    emailValidator(editedItem.email_prof) === true &&
+    editedItem.phone != ''&& editedItem.phone_emergency &&
     validationPhoneError.value === 'valid' &&
-    validationPhoneEmergencyError.value === 'valid'
+    validationphone_emergencyError.value === 'valid'
   );
 }
 
 function validateStep2() {
   return (
-    requiredValidator(editedItem.nbChildren) === true &&
-    integerValidator(editedItem.nbChildren) === true
+    requiredValidator(editedItem.nb_children) === true &&
+    integerValidator(editedItem.nb_children) === true
   );
 }
 
 function validateStep3() {
-  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false  && requiredValidator(editedItem.deliveryDateCin) === true 
-  && dateMinNowMax100Validator(editedItem.deliveryDateCin) === true && requiredValidator(editedItem.deliveryPlaceCin) === true 
-  && lengthValidator(editedItem.deliveryPlaceCin , 15,3) === true && editedItem.numPassport === ''
+  if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false  && requiredValidator(editedItem.delivery_date_cin) === true 
+  && dateMinNowMax100Validator(editedItem.delivery_date_cin) === true && requiredValidator(editedItem.delivery_place_cin) === true 
+  && lengthValidator(editedItem.delivery_place_cin , 30,3) === true && editedItem.num_passport === ''
 ) {
     // Cas 1
     // console.log("step 3 cas 1 ")
     return true
-  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && editedItem.numPassport 
-  && requiredValidator(editedItem.deliveryDateCin) === true && dateMinNowMax100Validator(editedItem.deliveryDateCin) === true  
-  && requiredValidator(editedItem.deliveryPlaceCin) === true  && lengthValidator(editedItem.deliveryPlaceCin , 15,3) === true
-  && lengthValidator(editedItem.numPassport,company.value.max_passport,company.value.min_passport) === true) {
+  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && editedItem.num_passport 
+  && requiredValidator(editedItem.delivery_date_cin) === true && dateMinNowMax100Validator(editedItem.delivery_date_cin) === true  
+  && requiredValidator(editedItem.delivery_place_cin) === true  && lengthValidator(editedItem.delivery_place_cin , 30,3) === true
+  && lengthValidator(editedItem.num_passport,company.value.max_passport,company.value.min_passport) === true) {
     // Cas 2
     // console.log("step 3 cas 2 ")
     return true
-  } else if(isCardIdAndCinRequired() === true && requiredValidator(editedItem.carteId) === true && lengthValidator(editedItem.carteId, 50, 3) === true && isValidPassport.value ){
+  } else if(isCardIdAndCinRequired() === true && requiredValidator(editedItem.carte_id) === true && lengthValidator(editedItem.carte_id, 50, 3) === true && isValidPassport.value ){
     // Cas 3
     //  console.log("step 3 cas 3 ")
     return true
@@ -260,29 +264,31 @@ function validateStep3() {
 function validateStep4() {
   return (
     requiredValidator(editedItem.specialty) === true &&
-    lengthValidator(editedItem.specialty, 15, 4) === true &&
-    lengthValidator(editedItem.levelStudies, 15, 4) === true &&
-    requiredValidator(editedItem.levelStudies) === true
+    lengthValidator(editedItem.specialty, 30, 4) === true &&
+    lengthValidator(editedItem.level_studies, 30, 4) === true &&
+    requiredValidator(editedItem.level_studies) === true
   );
 }
 
 function validateStep6() {
-  if( requiredValidator(editedItem.integrationDate) === true &&
-    dateIntegrationValidator(editedItem.integrationDate , editedItem.dateBirth) === true &&
+  if( requiredValidator(editedItem.integration_date) === true &&
+    dateIntegrationValidator(editedItem.integration_date , editedItem.date_birth) === true &&
     requiredValidator(editedItem.department_id) === true  &&
     requiredValidator(editedItem.team_id) === true &&
-    requiredValidator(editedItem.regimeSocial) === true && 
-    requiredValidator(editedItem.matricule) === true && 
-    lengthValidator(editedItem.matricule, 15, 3) === true &&
-    editedItem.text !=null && lengthValidator(editedItem.text, 15, 4) === true ){
+    requiredValidator(editedItem.position_id) === true  &&
+    requiredValidator(editedItem.regime_social) === true && 
+    requiredValidator(editedItem.registration) === true && 
+    lengthValidator(editedItem.registration, 30, 3) === true &&
+    editedItem.text !=null && lengthValidator(editedItem.text, 30, 4) === true ){
        return true
-    }else if( requiredValidator(editedItem.integrationDate) === true &&
-    dateIntegrationValidator(editedItem.integrationDate , editedItem.dateBirth) === true &&
+    }else if( requiredValidator(editedItem.integration_date) === true &&
+    dateIntegrationValidator(editedItem.integration_date , editedItem.date_birth) === true &&
     requiredValidator(editedItem.department_id) === true  &&
     requiredValidator(editedItem.team_id) === true &&
-    requiredValidator(editedItem.matricule) === true && 
-    lengthValidator(editedItem.matricule, 15, 3) === true &&
-    requiredValidator(editedItem.regimeSocial) === true && editedItem.text === '' ){
+    requiredValidator(editedItem.position_id) === true  &&
+    requiredValidator(editedItem.registration) === true && 
+    lengthValidator(editedItem.registration, 30, 3) === true &&
+    requiredValidator(editedItem.regime_social) === true && editedItem.text === '' ){
         return true
     }else{
         return false
@@ -292,7 +298,7 @@ function validateStep6() {
 const phoneNumber = ref('')
 const selectedCountry = ref({ valid: false });
 const validationPhoneError = ref('');
-const validationPhoneEmergencyError = ref('');
+const validationphone_emergencyError = ref('');
 
 const customPhoneValidation = async (value, country) => {
   while (!country) {
@@ -302,7 +308,8 @@ const customPhoneValidation = async (value, country) => {
   phoneNumber.value = value;
   editedItem.phone = value
 
-  // console.log(selectedCountry.value.valid)
+  // await check_user_data(editedItem)
+  // console.log("test test : ",check_user.value.phoneExiste)
     
   if (selectedCountry.value.valid === undefined ) {
     validationPhoneError.value = '';
@@ -313,37 +320,55 @@ const customPhoneValidation = async (value, country) => {
   }
 }
 
-const customPhoneEmergencyValidation = async (value, country) => {
+const customphone_emergencyValidation = async (value, country) => {
   while (!country) {
     await new Promise(resolve => setTimeout(resolve, 100)); // Attend 100ms
   }
   selectedCountry.value = country;
   phoneNumber.value = value;
-  editedItem.phoneEmergency = value  
+  editedItem.phone_emergency = value  
 
-  if (selectedCountry.value.valid === undefined ) {
-    validationPhoneEmergencyError.value = '';
+  // await check_user_data(editedItem)
+
+   if (selectedCountry.value.valid === undefined ) {
+    validationphone_emergencyError.value = '';
   }else if (selectedCountry.value.valid === false) {
-    validationPhoneEmergencyError.value = 'Phone number is invalide !';
+    validationphone_emergencyError.value = 'Phone number is invalide !';
   } else {
-    validationPhoneEmergencyError.value ='valid';
+    validationphone_emergencyError.value ='valid';
   }
 }
 
+// const check_email = ref(false);
+const check_email_prof = ref(false);
+const check_phone = ref(false);
+const check_phone_emergency = ref(false);
+const check_cin = ref(false);
+const check_passport = ref(false);
+// async function emailValidation (data){
+//   await check_user_data(data)
+
+//   // console.log("helmi", check_user.value.emailExiste)
+//   // check_email.value = check_user.value.emailExiste
+  
+ 
+   
+// }
+
 const isValidPassport = ref()
-const messageValidNumPassport = ref('')
-function validateNumPassport() {
+const messageValidnum_passport = ref('')
+function validatenum_passport() {
   const isNationality = editedItem.nationality === company.value.nationality;
 
-  if (editedItem.numPassport && lengthValidator(editedItem.numPassport,company.value.max_passport,company.value.min_passport) != true){
+  if (editedItem.num_passport && lengthValidator(editedItem.num_passport,company.value.max_passport,company.value.min_passport) != true){
     // console.log("test 2")
     isValidPassport.value = false
-    messageValidNumPassport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
+    messageValidnum_passport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
   }
   else{
     // console.log("test 3")
     isValidPassport.value = true
-    messageValidNumPassport.value = ""
+    messageValidnum_passport.value = ""
   }
 
   return {
@@ -352,30 +377,30 @@ function validateNumPassport() {
   };
 }
 
-const isValidCarteId = ref()
-const messageValidCarteId = ref('')
-function validateCarteId() {
+const isValidcarte_id = ref()
+const messageValidcarte_id = ref('')
+function validatecarte_id() {
   const isNationality = editedItem.nationality === company.value.nationality;
-  requiredValidator(editedItem.carteId)
+  requiredValidator(editedItem.carte_id)
 
-  if(!isNationality && !editedItem.carteId ){
+  if(!isNationality && !editedItem.carte_id ){
     // console.log("test 1")
-    isValidCarteId.value = false
-    messageValidCarteId.value = "carte id is required !"
-  }else if (editedItem.carteId && lengthValidator(editedItem.carteId,8,6) != true){
+    isValidcarte_id.value = false
+    messageValidcarte_id.value = "carte id is required !"
+  }else if (editedItem.carte_id && lengthValidator(editedItem.carte_id,8,6) != true){
     // console.log("test 2")
-    isValidCarteId.value = false
-    messageValidCarteId.value = "carte id must be between 6 and 8 characters !"
+    isValidcarte_id.value = false
+    messageValidcarte_id.value = "carte id must be between 6 and 8 characters !"
   }
   else{
     // console.log("test 3")
-    isValidCarteId.value = true
-    messageValidCarteId.value = ""
+    isValidcarte_id.value = true
+    messageValidcarte_id.value = ""
   }
 
   return {
     'otp-input': true,
-    'error-tel-input': !isValidCarteId.value
+    'error-tel-input': !isValidcarte_id.value
   };
 }
 
@@ -424,23 +449,23 @@ function validateCIN() {
         <!-- Contenu de l'étape Generale -->
         <v-row>
           <v-col>
-            <v-text-field v-model="editedItem.lastName" label="Nom"
-              :rules="[requiredValidator, lengthValidator(editedItem.lastName, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.last_name" label="Nom"
+              :rules="[requiredValidator, lengthValidator(editedItem.last_name, 30, 3)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.firstName" label="Prénom"
-              :rules="[requiredValidator, lengthValidator(editedItem.firstName, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.first_name" label="Prénom"
+              :rules="[requiredValidator, lengthValidator(editedItem.first_name, 30, 3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="editedItem.dateBirth" label="Date de naissance" type="date"
+            <v-text-field v-model="editedItem.date_birth" label="Date de naissance" type="date"
               :rules="[requiredValidator, dateMin18Max100Validator]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.placeBirth" label="Lieu de naissance"
-              :rules="[requiredValidator, lengthValidator(editedItem.placeBirth, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.place_birth" label="Lieu de naissance"
+              :rules="[requiredValidator, lengthValidator(editedItem.place_birth, 30, 3)]"></v-text-field>
           </v-col>
           <v-col>
             <v-select v-model="editedItem.sex" :items="sexOptions" label="Sexe" :rules="[requiredValidator]"></v-select>
@@ -461,18 +486,19 @@ function validateCIN() {
         <v-row>
           <v-col>
             <v-text-field v-model="editedItem.address" label="Adresse"
-              :rules="[requiredValidator, lengthValidator(editedItem.address, 15, 3)]"></v-text-field>
+              :rules="[requiredValidator, lengthValidator(editedItem.address, 30, 3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-text-field v-model="editedItem.email" label="Email"
-              :rules="[requiredValidator, emailValidator(editedItem.email)]"></v-text-field>
+            {{ check_user }}
+            <v-text-field v-model="editedItem.email" label="Email" @update:model-value="check_user_data(editedItem)"
+              :rules="[requiredValidator, emailValidator(editedItem.email) ] "></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.emailProf" label="Email professionnel"
-              :rules="[emailValidator(editedItem.emailProf)]"></v-text-field>
+            <v-text-field v-model="editedItem.email_prof" label="Email professionnel" @update:model-value="emailValidation(editedItem)"
+              :rules="[emailValidator(editedItem.email_prof) , (v) => check_email_prof ]"></v-text-field>
           </v-col>
         </v-row>
 
@@ -480,16 +506,16 @@ function validateCIN() {
           <v-col>
             <vue-tel-input v-model:value="editedItem.phone" type="number" mode="international"
               :class="{ 'custom-input': validationPhoneError !=='Phone number is invalide !', 'custom-input error-tel-input': validationPhoneError === 'Phone number is invalide !' }"
-              :rules="[requiredValidator(editedItem.phone), vueTelInputValidator(selectedCountry)]" @input="customPhoneValidation">
+              :rules="[requiredValidator(editedItem.phone), vueTelInputValidator(selectedCountry) , phoneExistsValidator(editedItem)]" @input="customPhoneValidation">
             </vue-tel-input>
             <div class="error-message v-input__details v-messages__message"  v-if="validationPhoneError !== 'valid'">{{ validationPhoneError }}</div>
           </v-col>
           <v-col>
-            <vue-tel-input  v-model:value="editedItem.phoneEmergency" type="number" mode="international"
-              :class="{ 'custom-input': validationPhoneEmergencyError  !=='Phone number is invalide !', 'custom-input error-tel-input': validationPhoneEmergencyError === 'Phone number is invalide !' }"
-              :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customPhoneEmergencyValidation">
+            <vue-tel-input v-model:value="editedItem.phone_emergency" type="number" mode="international"
+              :class="{ 'custom-input': validationphone_emergencyError  !=='Phone number is invalide !', 'custom-input error-tel-input': validationphone_emergencyError === 'Phone number is invalide !' }"
+              :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customphone_emergencyValidation">
             </vue-tel-input>
-            <div class="error-message v-input__details v-messages__message" v-if="validationPhoneEmergencyError !== 'valid'">{{ validationPhoneEmergencyError }}</div>
+            <div class="error-message v-input__details v-messages__message" v-if="(validationphone_emergencyError !== 'valid')">{{ validationphone_emergencyError }}</div>
           </v-col>
         </v-row>
 
@@ -507,14 +533,14 @@ function validateCIN() {
         <!-- Contenu de l'étape Family Situation -->
         <v-row>
           <v-col>
-            <v-select v-model="editedItem.FamilySituation" :items="familySituationOptions" label="Situation familiale"
+            <v-select v-model="editedItem.family_situation" :items="family_situationOptions" label="Situation familiale"
               :rules="[requiredValidator]"></v-select>
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field v-model="editedItem.nbChildren" label="Nombre d'enfants"
-              :rules="[requiredValidator, integerValidator(editedItem.nbChildren)]"></v-text-field>
+            <v-text-field v-model="editedItem.nb_children" label="Nombre d'enfants"
+              :rules="[requiredValidator, integerValidator(editedItem.nb_children)]"></v-text-field>
           </v-col>
         </v-row>
 
@@ -537,15 +563,15 @@ function validateCIN() {
           <v-col cols="12" md="5" class="mt-2">
             <v-otp-input
               ref="otpInput"
-              v-model:value="editedItem.numPassport"
+              v-model:value="editedItem.num_passport"
               separator="-"
-              :input-classes="validateNumPassport()"
+              :input-classes="validatenum_passport()"
               :num-inputs="company.max_passport"
               input-type="letter-numeric"
               :conditionalClass="['one', 'two', 'three', 'four']"
             ></v-otp-input>
             <div v-if="!isValidPassport.value" class="error-message v-input__details v-messages__message">
-             {{ messageValidNumPassport }}
+             {{ messageValidnum_passport }}
             </div>
           </v-col>
           <v-col cols="12" md="4" class="mt-2 md:mt-0">
@@ -568,15 +594,15 @@ function validateCIN() {
             <v-otp-input ref="otpInput" v-model:value="editedItem.cin" separator="-"
               :num-inputs="company.max_cin" input-type="numeric"
               :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']"
-              :input-classes="validateCIN() " />
+              :input-classes="validateCIN() "  />
           </v-col>
           <v-col cols="12" md="3">
-            <v-text-field type="date" v-model="editedItem.deliveryDateCin" label="Date de délivrance CIN"
+            <v-text-field type="date" v-model="editedItem.delivery_date_cin" label="Date de délivrance CIN"
             :rules="[editedItem.cin !== null ? (requiredValidator, dateMinNowMax100Validator) : true ]"></v-text-field>
           </v-col>
           <v-col cols="12" md="2">
-            <v-text-field v-model="editedItem.deliveryPlaceCin" label="Lieu de délivrance CIN" 
-            :rules="[editedItem.cin !== null ? (requiredValidator,lengthValidator(editedItem.deliveryPlaceCin , 15,3)) : true ]" ></v-text-field>
+            <v-text-field v-model="editedItem.delivery_place_cin" label="Lieu de délivrance CIN" 
+            :rules="[editedItem.cin !== null ? (requiredValidator,lengthValidator(editedItem.delivery_place_cin , 30,3)) : true ]" ></v-text-field>
           </v-col>
         </v-row>
         <v-row cols="12" v-if="isCardIdAndCinRequired() === true">  <!-- -->
@@ -584,11 +610,11 @@ function validateCIN() {
             <v-icon start icon="mdi-card-account-mail-outline"></v-icon> ID Card
           </v-col>
           <v-col cols="12" md="10">
-            <v-text-field v-model="editedItem.carteId" label="Card id" 
-              :class="{ 'error-input' : isValidCarteId }"
-              :style="{ 'border-color': isValidCarteId ? 'red' : '', 'border-radius': '5px' }"
-              :rules="[requiredValidator(editedItem.carteId) , lengthValidator(editedItem.carteId, 50, 3)]"
-              @input="validateCarteId()">
+            <v-text-field v-model="editedItem.carte_id" label="Card id" 
+              :class="{ 'error-input' : isValidcarte_id }"
+              :style="{ 'border-color': isValidcarte_id ? 'red' : '', 'border-radius': '5px' }"
+              :rules="[requiredValidator(editedItem.carte_id) , lengthValidator(editedItem.carte_id, 50, 3)]"
+              @input="validatecarte_id()">
             </v-text-field>
           </v-col>
         </v-row>
@@ -607,12 +633,12 @@ function validateCIN() {
         <!-- Contenu de l'étape Study -->
         <v-row>
           <v-col>
-            <v-text-field v-model="editedItem.levelStudies" label="Niveau d'études"
-            :rules="[requiredValidator, lengthValidator(editedItem.levelStudies, 15, 4)]"></v-text-field>
+            <v-text-field v-model="editedItem.level_studies" label="Niveau d'études"
+            :rules="[requiredValidator, lengthValidator(editedItem.level_studies, 30, 4)]"></v-text-field>
           </v-col>
           <v-col>
             <v-text-field v-model="editedItem.specialty" label="Spécialité" 
-            :rules="[requiredValidator, lengthValidator(editedItem.specialty, 15, 4)]"></v-text-field>
+            :rules="[requiredValidator, lengthValidator(editedItem.specialty, 30, 4)]"></v-text-field>
           </v-col> 
         </v-row>
 
@@ -656,18 +682,18 @@ function validateCIN() {
         <!-- Contenu de l'étape Administrative -->
         <v-row>
           <v-col>
-            <v-text-field type="date" v-model="editedItem.integrationDate" label="Date d'intégration"
-            :rules="[requiredValidator , dateIntegrationValidator(editedItem.integrationDate , editedItem.dateBirth)]"></v-text-field>
+            <v-text-field type="date" v-model="editedItem.integration_date" label="Date d'intégration"
+            :rules="[requiredValidator , dateIntegrationValidator(editedItem.integration_date , editedItem.date_birth)]"></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.matricule" label="Matricule" 
-            :rules="[requiredValidator, lengthValidator(editedItem.specialty, 15, 3)]"></v-text-field>
+            <v-text-field v-model="editedItem.registration" label="registration" 
+            :rules="[requiredValidator, lengthValidator(editedItem.specialty, 30, 3)]"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
-            <v-select v-model="editedItem.department_id" :items="departments_list" item-title="departmentName"
+            <v-select v-model="editedItem.department_id" :items="departments_list" item-title="department_name"
               item-value="id" @change="updateTeamList" @click="updateTeamList" label="Département" :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>
@@ -678,11 +704,18 @@ function validateCIN() {
 
         <v-row>
           <v-col>
-            <v-select v-model="editedItem.regimeSocial" :items="regimeSocialOptions" item-title="regimeSocial"
-              item-value="regimeSocial" label="Régime social"  :rules="[requiredValidator]"></v-select>
+            <v-select v-model="editedItem.position_id" :items="positions_list" item-title="job_name"
+              item-value="id"  label="Position" :rules="[requiredValidator]"></v-select>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col>
+            <v-select v-model="editedItem.regime_social" :items="regime_socialOptions" item-title="regime_social"
+              item-value="regime_social" label="Régime social"  :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.text" label="Autre Régime Social"  :rules="[ lengthValidator(editedItem.text, 15, 4)]"></v-text-field>
+            <v-text-field v-model="editedItem.text" label="Autre Régime Social"  :rules="[ lengthValidator(editedItem.text, 30, 4)]"></v-text-field>
           </v-col>
         </v-row>
 
