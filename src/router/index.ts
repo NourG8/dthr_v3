@@ -23,7 +23,7 @@ const router = createRouter({
         {
           path: 'users',
           meta: { requiresAuth: true },
-          component: () => import('../views/Users/index.vue'),
+          component: () => import('../components/Users/usersList.vue'),
         },
         {
           path: 'user/contracts/:id',
@@ -33,6 +33,11 @@ const router = createRouter({
           path: 'roles',
           meta: { requiresAuth: true },
           component: () => import('../components/Roles/components/rolesList.vue'),
+        },
+        {
+          path: 'permissions',
+          meta: { requiresAuth: true },
+          component: () => import('../components/Permissions/components/permissionsList.vue'),
         },
         // {
         //   path: 'icons',

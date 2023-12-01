@@ -6,32 +6,32 @@
   const props = withDefaults(defineProps<Props>(), {});
 
   const getColorStyle = () => ({
-    color: props.data.sex === 'Man' ? '#42A5F5' : props.data.sex === 'Women' ? '#EDA8BF' : '',
+    color: props.data.sex === 'Male' ? '#42A5F5' : props.data.sex === 'Female' ? '#EDA8BF' : '',
   });
 
   const fields = [
-    'lastName',
-    'firstName',
+    'last_name',
+    'first_name',
     'address',
     'nationality',
     'sex',
-    'matricule',
+    'registration',
     'email',
-    'emailProf',
+    'email_prof',
     'phone',
-    'integrationDate',
-    'dateBirth',
-    'placeBirth',
-    'FamilySituation',
-    'nbChildren',
-    'numPassport',
+    'integration_date',
+    'date_birth',
+    'place_birth',
+    'family_situation',
+    'nb_children',
+    'num_passport',
     'cin',
-    'deliveryDateCin',
-    'deliveryPlaceCin',
+    'delivery_date_cin',
+    'delivery_place_cin',
     'specialty',
-    'levelStudies',
-    'carteId',
-    'regimeSocial',
+    'level_studies',
+    'carte_id',
+    'regime_social',
   ];
 
   function formatDate(date: any) {
@@ -39,53 +39,53 @@
   }
 
   const iconMappings: Record<string, string> = {
-  lastName: 'mdi-account-outline',
-  firstName: 'mdi-account-outline',
+  last_name: 'mdi-account-outline',
+  first_name: 'mdi-account-outline',
   email: 'mdi-email-outline',
-  emailProf: 'mdi-email-outline',
+  email_prof: 'mdi-email-outline',
   sex:'mdi-gender-male-female',
   address: 'mdi-map-marker', 
   phone: 'mdi-cellphone',
-  integrationDate: 'mdi-calendar',
-  dateBirth: 'mdi-calendar',
-  placeBirth: 'mdi-map-marker-radius',
-  nbChildren: 'mdi-human-female-female',
-  FamilySituation: 'mdi-security',
+  integration_date: 'mdi-calendar',
+  date_birth: 'mdi-calendar',
+  place_birth: 'mdi-map-marker-radius',
+  nb_children: 'mdi-human-female-female',
+  family_situation: 'mdi-security',
   nationality: 'mdi-credit-card',
   cin: 'mdi-account-box-outline',
-  deliveryDateCin: 'mdi-calendar',
-  deliveryPlaceCin: 'mdi-map-marker-radius',
+  delivery_date_cin: 'mdi-calendar',
+  delivery_place_cin: 'mdi-map-marker-radius',
   specialty: 'mdi-zodiac-taurus',
-  levelStudies: 'mdi-library',
-  matricule: 'mdi-badge-account-outline',
-  carteId: 'mdi-card-account-mail-outline',
-  regimeSocial: 'mdi-badge-account-outline',
-  numPassport: 'mdi-book',
+  level_studies: 'mdi-library',
+  registration: 'mdi-badge-account-outline',
+  carte_id: 'mdi-card-account-mail-outline',
+  regime_social: 'mdi-badge-account-outline',
+  num_passport: 'mdi-book',
 };
 
 const fieldLabels: Record<string, string> = {
-  lastName: 'Nom',
-  firstName: 'Prénom',
+  last_name: 'Nom',
+  first_name: 'Prénom',
   email: 'Email',
   sex: 'Sex',
-  emailProf: 'Email Professionnel',
+  email_prof: 'Email Professionnel',
   address: 'Adresse',
   phone: 'Téléphone',
-  integrationDate: 'Date d\'intégration',
-  dateBirth: 'Date de naissance',
-  placeBirth: 'Lieu de naissance',
-  nbChildren: 'Nombre d\'enfants',
-  FamilySituation: 'Situation familiale',
+  integration_date: 'Date d\'intégration',
+  date_birth: 'Date de naissance',
+  place_birth: 'Lieu de naissance',
+  nb_children: 'Nombre d\'enfants',
+  family_situation: 'Situation familiale',
   nationality: 'Nationalité',
   cin: 'CIN',
-  deliveryDateCin: 'Date de délivrance CIN',
-  deliveryPlaceCin: 'Lieu de délivrance CIN',
+  delivery_date_cin: 'Date de délivrance CIN',
+  delivery_place_cin: 'Lieu de délivrance CIN',
   specialty: 'Spécialités',
-  levelStudies: 'Niveau d\'études',
-  matricule: 'Matricule',
-  carteId: 'Carte ID',
-  regimeSocial: 'Régime social',
-  numPassport: 'Passport',
+  level_studies: 'Niveau d\'études',
+  registration: 'registration',
+  carte_id: 'Carte ID',
+  regime_social: 'Régime social',
+  num_passport: 'Passport',
   // Ajoute d'autres champs et leurs labels ici
 };
 
@@ -99,47 +99,47 @@ function getIcon(field: string) {
 
 function getFieldContent(fieldName: string): string {
   switch (fieldName) {
-    case 'integrationDate':
-    case 'dateBirth':
-    case 'deliveryDateCin':
+    case 'integration_date':
+    case 'date_birth':
+    case 'delivery_date_cin':
       return formatDate(props.data[fieldName]);
     case 'sex':
       return props.data[fieldName] ;
-    case 'regimeSocial':
+    case 'regime_social':
       return props.data[fieldName] ? `${props.data[fieldName]} (${props.data.text})` : ' ---- ';
-    case 'lastName':
+    case 'last_name':
       return props.data[fieldName] || ' ---- ';
-    case 'firstName':
+    case 'first_name':
       return props.data[fieldName] || ' ---- ';
     case 'email':
       return props.data[fieldName] || ' ---- ';
-    case 'emailProf':
+    case 'email_prof':
       return props.data[fieldName] || ' ---- ';
     case 'address':
       return props.data[fieldName] || ' ---- ';
     case 'phone':
       return props.data[fieldName] || ' ---- ';
-    case 'placeBirth':
+    case 'place_birth':
       return props.data[fieldName] || ' ---- ';
-    case 'nbChildren':
+    case 'nb_children':
       return  props.data[fieldName] ;
-    case 'FamilySituation':
+    case 'family_situation':
       return props.data[fieldName] || ' ---- ';
     case 'nationality':
       return props.data[fieldName] || ' ---- ';
     case 'cin':
       return props.data[fieldName] || ' ---- ';
-    case 'deliveryPlaceCin':
+    case 'delivery_place_cin':
       return props.data[fieldName] || ' ---- ';
     case 'specialty':
       return props.data[fieldName] || ' ---- ';
-    case 'levelStudies':
+    case 'level_studies':
       return props.data[fieldName] || ' ---- ';
-    case 'matricule':
+    case 'registration':
       return props.data[fieldName] || ' ---- ';
-    case 'carteId':
+    case 'carte_id':
       return props.data[fieldName] || ' ---- ';
-    case 'numPassport':
+    case 'num_passport':
       return props.data[fieldName] || ' ---- ';
 
     default:

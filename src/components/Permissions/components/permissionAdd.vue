@@ -3,28 +3,31 @@ import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Val
 
 const editedItem = ref({
     id: '',
-    role: '',
-    description: ''
+    namePermission: '',
+    description: '',
+    code: ''
 });
 
 const emit = defineEmits(['save', 'close']);
 
-const emitRoleSave = () => {
+const emitPermissionSave = () => {
     // console.log(editedItem.value)
     // Vous émettez l'événement 'save'
     emit('save', editedItem.value);
 };
 
-const emitRoleClose = () => {
+const emitPermissionClose = () => {
     // Vous émettez l'événement 'close'
     emit('close');
 };
 
 function validateForm() {
     return (
-        requiredValidator(editedItem.value.role) === true &&
-        lengthValidator(editedItem.value.role, 30, 5) === true &&
-        requiredValidator(editedItem.value.description) === true)
+        requiredValidator(editedItem.value.namePermission) === true &&
+        lengthValidator(editedItem.value.namePermission, 30, 5) === true &&
+        requiredValidator(editedItem.value.description) === true && 
+        requiredValidator(editedItem.value.code) === true &&
+        lengthValidator(editedItem.value.code, 30, 3) === true)
 }
 
 </script>
@@ -32,8 +35,15 @@ function validateForm() {
 <template>
     <v-row>
         <v-col>
-            <v-text-field v-model="editedItem.role" label="Role name"
-                :rules="[requiredValidator, lengthValidator(editedItem.role, 30, 5)]"></v-text-field>
+            <v-text-field v-model="editedItem.namePermission" label="permission name"
+                :rules="[requiredValidator, lengthValidator(editedItem.namePermission, 30, 5)]"></v-text-field>
+        </v-col>
+    </v-row>
+
+    <v-row>
+        <v-col>
+            <v-text-field v-model="editedItem.code" label="Code"
+                :rules="[requiredValidator , lengthValidator(editedItem.code, 30, 3)]"></v-text-field>
         </v-col>
     </v-row>
 
@@ -46,10 +56,10 @@ function validateForm() {
     <v-card-actions class="mt-4">
         <span></span>
         <v-spacer></v-spacer>
-        <v-btn class="custom-primary-bg" outlined @click="emitRoleSave" :disabled="!validateForm()">
+        <v-btn class="custom-primary-bg" outlined @click="emitPermissionSave" :disabled="!validateForm()">
             Save
         </v-btn>
-        <v-btn type="reset" outlined class="mx-2" @click="emitRoleClose">
+        <v-btn type="reset" outlined class="mx-2" @click="emitPermissionClose">
             Cancel
         </v-btn>
     </v-card-actions>

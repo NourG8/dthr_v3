@@ -16,10 +16,11 @@ export const useDepartment = defineStore('department', () => {
     }
   }
 
-  async function get_teams_department(id_dep : number) {
+  async function get_teams_department(id_dep: number) {
     try {
       const response = await api.get_teams_department(id_dep);
-      team_list.value = response.teams;
+      team_list.value = response;
+      // console.log(team_list.value);
     } catch (error) {
       console.error(error);
     }

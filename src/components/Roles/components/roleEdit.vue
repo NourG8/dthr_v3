@@ -1,5 +1,5 @@
 <script setup lang="ts" >
-import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { lengthValidator, requiredValidator } from '@/@core/utils/validators';
 
 const editedItem = ref({
     id: '',
@@ -7,18 +7,28 @@ const editedItem = ref({
     description: ''
 });
 
-const emit = defineEmits(['save', 'close']);
+const emit = defineEmits(['edit', 'close']);
 
 const emitRoleSave = () => {
-    // console.log(editedItem.value)
+    console.log(editedItem.value)
     // Vous émettez l'événement 'save'
-    emit('save', editedItem.value);
+    emit('edit', editedItem.value);
 };
 
 const emitRoleClose = () => {
     // Vous émettez l'événement 'close'
     emit('close');
 };
+
+interface Props {
+    data: any;
+}
+const props = withDefaults(defineProps<Props>(), {});
+
+onMounted(async () => {
+    console.log(props.data)
+    editedItem.value = props.data
+})
 
 function validateForm() {
     return (

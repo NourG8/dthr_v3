@@ -1,9 +1,13 @@
 // import { useLocales } from '@/stores/locales'
+import { useUser } from '@/stores/user'
 import moment from 'moment'
 import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 
 // const { getTranslationT } = useLocales()
 // const translate = getTranslationT()
+
+const { get_users, store_user, check_user_data } = useUser()
+const { users_list, check_user, loading } = storeToRefs(useUser())
 
 const checkIsLottie = files => {
   return new Promise(resolve => {
@@ -336,7 +340,7 @@ export const vueTelInputValidator = (countryInfo: unknown) => {
   return '';  // Numéro de téléphone valide, renvoie une chaîne vide
 }
 
-export const validatePassportNumber = (value: string, carteId: unknown, cin: unknown, deliveryDateCin: unknown, deliveryPlaceCin: unknown, nationality: unknown) => {
+export const validatePassportNumber = (value: string, carte_id: unknown, cin: unknown, delivery_date_cin: unknown, delivery_place_cin: unknown, nationality: unknown) => {
   if (nationality === 'Tunisienne') {
     return true;
   }
@@ -345,12 +349,12 @@ export const validatePassportNumber = (value: string, carteId: unknown, cin: unk
 }
 
 
-// export const validatePassportNumber = (value: string , carteId: unknown, cin: unknown ,deliveryDateCin: unknown,deliveryPlaceCin: unknown ) => {
+// export const validatePassportNumber = (value: string , carte_id: unknown, cin: unknown ,delivery_date_cin: unknown,delivery_place_cin: unknown ) => {
 //   const isRequired =
-//     carteId === null &&
+//     carte_id === null &&
 //     cin === null &&
-//     deliveryDateCin === null &&
-//     deliveryPlaceCin === null;
+//     delivery_date_cin === null &&
+//     delivery_place_cin === null;
 
 //   const rules = [];
 //   if (isRequired) {

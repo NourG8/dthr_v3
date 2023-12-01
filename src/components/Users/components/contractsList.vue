@@ -11,7 +11,7 @@ const { get_user_contracts, get_user, get_user_contracts_model, get_user_contrac
 const { contracts_list_user, users_list, signed_contracts_list_user, user } = storeToRefs(useUser());
 
 const { get_contracts, downloadContractUser, downloadModelContract } = useContract();
-const { contracts_list } = storeToRefs(useContract());
+const { contracts_list, loading } = storeToRefs(useContract());
 
 const route = useRoute();
 const tab = ref(0);
@@ -222,7 +222,7 @@ async function handleContractForm(contract_id: any) {
         }
     })
 
-    min_startDate.value = user.value?.integrationDate
+    min_startDate.value = user.value?.integration_date
     min_endDate.value = editedItemC.value.startDate
 
     for (let k = 0; k < contracts_list.value.length; k++) {
@@ -244,7 +244,7 @@ function validateFormContract() {
         editedItemC.value.status === 'Canceled' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.raison) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
         requiredValidator(editedItemC.value.trialPeriod) === true &&
@@ -252,7 +252,7 @@ function validateFormContract() {
         requiredValidator(editedItemC.value.salary) === true &&
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(editedItemC.value.date_status) === true &&
-        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integrationDate) === true &&
+        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integration_date) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true) {
         // console.log("cas (Canceled)")
@@ -261,7 +261,7 @@ function validateFormContract() {
         editedItemC.value.status === 'Ended' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.raison) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
         requiredValidator(editedItemC.value.trialPeriod) === true &&
@@ -269,7 +269,7 @@ function validateFormContract() {
         requiredValidator(editedItemC.value.salary) === true &&
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(editedItemC.value.date_status) === true &&
-        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integrationDate) === true &&
+        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integration_date) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true) {
         // console.log("cas (Ended)")
@@ -278,14 +278,14 @@ function validateFormContract() {
         editedItemC.value.status === 'Signed' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
         requiredValidator(editedItemC.value.trialPeriod) === true &&
         betweenValidator(editedItemC.value.trialPeriod, 1, 1200) === true &&
         requiredValidator(editedItemC.value.salary) === true &&
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(editedItemC.value.date_status) === true &&
-        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integrationDate) === true &&
+        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integration_date) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true &&
         requiredValidator(editedItemC.value.fileContract) === true) {
@@ -295,7 +295,7 @@ function validateFormContract() {
         editedItemC.value.status === 'Signed' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.endDate) === true &&
         dateMax100Validator(editedItemC.value.endDate, editedItemC.value.startDate) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
@@ -304,7 +304,7 @@ function validateFormContract() {
         requiredValidator(editedItemC.value.salary) === true &&
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(editedItemC.value.date_status) === true &&
-        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integrationDate) === true &&
+        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integration_date) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true &&
         requiredValidator(editedItemC.value.fileContract) === true) {
@@ -317,14 +317,14 @@ function validateFormContract() {
         editedItemC.value.status !== 'Ended' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
         requiredValidator(editedItemC.value.trialPeriod) === true &&
         betweenValidator(editedItemC.value.trialPeriod, 1, 1200) === true &&
         requiredValidator(editedItemC.value.salary) === true &&
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(editedItemC.value.date_status) === true &&
-        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integrationDate) === true &&
+        dateStatusContractValidator(editedItemC.value.date_status, user.value?.integration_date) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true) {
         // console.log("cas CDD (unsigned)")
@@ -334,7 +334,7 @@ function validateFormContract() {
         !editedItemC.value.date_status &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.endDate) === true &&
         dateMax100Validator(editedItemC.value.endDate, editedItemC.value.startDate) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
@@ -344,14 +344,14 @@ function validateFormContract() {
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true) {
-        console.log("cas CDD (unsigned)")
+        // console.log("cas CDD (unsigned)")
         return true
     } else if (editedItemC.value.type === 'CDI' &&
         !editedItemC.value.status &&
         !editedItemC.value.date_status &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.placeOfWork) === true &&
         requiredValidator(editedItemC.value.trialPeriod) === true &&
         betweenValidator(editedItemC.value.trialPeriod, 1, 1200) === true &&
@@ -359,10 +359,10 @@ function validateFormContract() {
         betweenValidator(editedItemC.value.salary, 100, 100000) === true &&
         requiredValidator(startTimeWork.value) === true &&
         requiredValidator(endTimeWork.value) === true) {
-        console.log("cas CDI (unsigned)")
+        // console.log("cas CDI (unsigned)")
         return true;
     } else {
-        console.log("cas Error ")
+        // console.log("cas Error ")
         return false
     }
 }
@@ -374,7 +374,7 @@ async function validateFormPhysicalContract(contract_id: any) {
     if (editedItemC.value.type === 'CDI' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(image.value) === true) {
         // console.log("cas CDI ")
         disabled_upload_contract.value = true
@@ -382,7 +382,7 @@ async function validateFormPhysicalContract(contract_id: any) {
     } else if (editedItemC.value.type === 'CDD' &&
         requiredValidator(editedItemC.value.contract_id) === true &&
         requiredValidator(editedItemC.value.startDate) === true &&
-        dateBetweenValidator(editedItemC.value.startDate, user.value?.integrationDate) === true &&
+        dateBetweenValidator(editedItemC.value.startDate, user.value?.integration_date) === true &&
         requiredValidator(editedItemC.value.endDate) === true &&
         dateMax100Validator(editedItemC.value.endDate, editedItemC.value.startDate) === true &&
         requiredValidator(image.value) === true) {
@@ -508,7 +508,7 @@ function onDrop(e) {
     e.stopPropagation()
     e.preventDefault()
     var files = e.dataTransfer.files
-    console.log("files : ", files)
+    // console.log("files : ", files)
     progressCircle(files[0])
     createFile(files[0])
 }
@@ -571,7 +571,11 @@ function Deletecontract(item) {
 </script>
 
 <template>
-    <v-card>
+<VCard min-height="250px" >
+      <!-- <div class="text-center mt-9" v-if="loading" >
+            <v-progress-circular :indeterminate="true" color="primary"></v-progress-circular>
+        </div> -->
+    <div >
         <v-tabs background-color="transparent" color="basil" grow class="mb-4" height="60px" v-model="tabs_contract">
             <v-tab v-for="item in items_contract" :key="item">
                 {{ item }}
@@ -585,7 +589,7 @@ function Deletecontract(item) {
                         <div class="pt-2 mb-1" v-if="add_contract == 0">
                             <v-card-actions>
                                 List Contracts User
-                                <b class="mr-2"> ( {{ user?.lastName }} {{ user?.firstName }} )</b>
+                                <b class="mr-2"> ( {{ user?.last_name }} {{ user?.first_name }} )</b>
                                 <v-spacer></v-spacer>
                                 <v-btn color="primary" outlined class="mr-2" @click="AddContract()"
                                     v-if="add_contract == 0">
@@ -643,7 +647,7 @@ function Deletecontract(item) {
                                                             class="contract-button">
                                                             <v-icon left icon="mdi-cloud-arrow-down">
                                                             </v-icon>
-                                                            Contract_{{ item.type }}_{{ user?.lastName }}_{{ user?.firstName
+                                                            Contract_{{ item.type }}_{{ user?.last_name }}_{{ user?.first_name
                                                             }}
                                                         </v-btn>
                                                     </template>
@@ -653,7 +657,7 @@ function Deletecontract(item) {
                                                     @click="downloadModelContractUser(item)" class="contract-button">
                                                     <v-icon left icon="mdi-cloud-arrow-down"> </v-icon>
                                                     <b class="ml-2">
-                                                        Contract_{{ item.type }}_{{ user.lastName }}_{{ user.firstName }}
+                                                        Contract_{{ item.type }}_{{ user.last_name }}_{{ user.first_name }}
                                                     </b>
                                                 </v-btn>
                                                 <input ref="uploader" class="d-none" type="file" accept="image/*" />
@@ -697,7 +701,7 @@ function Deletecontract(item) {
                                             <v-text-field required v-model="editedItemC.startDate" label="StartDat" dense
                                                 placeholder="Start date" type="date" outlined
                                                 @change="valid_form_contract(editedItemC.contract_id)"
-                                                :rules="[requiredValidator, dateBetweenValidator(editedItemC.startDate, user?.integrationDate)]">
+                                                :rules="[requiredValidator, dateBetweenValidator(editedItemC.startDate, user?.integration_date)]">
                                             </v-text-field>
 
                                         </v-col>
@@ -749,7 +753,7 @@ function Deletecontract(item) {
                                         <v-col cols="12" md="6">
                                             <v-text-field required v-model="editedItemC.date_status" label="date_status"
                                                 type="date" outlined dense placeholder="Status date"
-                                                :rules="[editedIndex === 1 ? (requiredValidator, dateStatusContractValidator(editedItemC.date_status, user?.integrationDate)) : true]"
+                                                :rules="[editedIndex === 1 ? (requiredValidator, dateStatusContractValidator(editedItemC.date_status, user?.integration_date)) : true]"
                                                 @change="valid_form_contract(editedItemC.contract_id)">
                                             </v-text-field>
                                         </v-col>
@@ -858,7 +862,7 @@ function Deletecontract(item) {
                 <div class="pt-2 mb-1" v-if="upload_image == false">
                     <v-card-actions>
                         List Contracts User
-                        <b> ( {{ user?.lastName }} {{ user?.firstName }} )</b>
+                        <b> ( {{ user?.last_name }} {{ user?.first_name }} )</b>
                         <v-spacer></v-spacer>
                         <v-spacer></v-spacer>
                         <v-btn color="primary" outlined @click="UploadContract()" v-if="upload_image == false">
@@ -885,7 +889,7 @@ function Deletecontract(item) {
                                     <v-text-field required v-model="editedItemC.startDate" :min="`${min_startDate}`"
                                         :max="`${max_startDate}`"
                                         @change="validateFormPhysicalContract(editedItemC.contract_id)" label="StartDate"
-                                        :rules="[requiredValidator, dateBetweenValidator(editedItemC.startDate, user?.integrationDate)]"
+                                        :rules="[requiredValidator, dateBetweenValidator(editedItemC.startDate, user?.integration_date)]"
                                         type="date" outlined dense placeholder="Start date">
                                     </v-text-field>
 
@@ -970,8 +974,8 @@ function Deletecontract(item) {
                             <p>
                                 <v-btn color="primary" class="ml-3" rounded depressed @click="Downloadcontract(item)">
                                     <v-icon left icon="mdi-cloud-arrow-down"> </v-icon>
-                                    Contract_{{ item.type }}_{{ user.lastName }}_{{
-                                        user.firstName
+                                    Contract_{{ item.type }}_{{ user.last_name }}_{{
+                                        user.first_name
                                     }}
                                 </v-btn>
                                 <input ref="uploader" class="d-none" type="file" accept="image/*" />
@@ -985,7 +989,8 @@ function Deletecontract(item) {
                 </div>
             </v-window-item>
         </v-window>
-    </v-card>
+    </div>
+</VCard>
 </template>
 
   

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-const firstName = ref('')
-const lastName = ref('')
+const first_name = ref('')
+const last_name = ref('')
 const city = ref('')
 const country = ref('')
 const company = ref('')
@@ -17,7 +17,7 @@ const checkbox = ref(false)
         md="6"
       >
         <VTextField
-          v-model="firstName"
+          v-model="first_name"
           label="First Name"
           placeholder="John"
         />
@@ -29,7 +29,7 @@ const checkbox = ref(false)
         md="6"
       >
         <VTextField
-          v-model="lastName"
+          v-model="last_name"
           label="Last Name"
           placeholder="Doe"
         />

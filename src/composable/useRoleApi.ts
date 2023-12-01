@@ -24,6 +24,7 @@ export const useRoleApi = createSharedComposable(() => {
         loading.value = true
         try {
             const { data } = await api.get<any>(`roles`)
+            console.log("api", loading.value)
             return data
         }
         finally {
@@ -42,9 +43,129 @@ export const useRoleApi = createSharedComposable(() => {
         }
     }
 
+    async function store_role(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.post<any>('/roles', payload)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function update_role(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.put<any>(`roles/${payload.id}`, payload)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function delete_role(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.get<any>(`roles/delete/${payload.id}`)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function get_nb_positions(payload: any) {
+        // loading.value = true
+        try {
+            const { data } = await api.get<any>(`role/getNb_Per/${payload.id}`)
+            return data
+        }
+        finally {
+            // loading.value = false
+        }
+    }
+
+    async function get_nb_personnes(payload: any) {
+        // loading.value = true
+        try {
+            const { data } = await api.get<any>(`role/getNb_Pos/${payload.id}`)
+            return data
+        }
+        finally {
+            // loading.value = false
+        }
+    }
+
+    async function archive_role(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.put<any>(`role/archive/${payload.id}`)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function reset_role(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.put<any>(`role/reset/${payload.id}`)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function archive_role_with_permissions(payload: any) {
+        loading.value = true
+        try {
+            const { data } = await api.get<any>(`archive/rolePermissions/${payload.id}`)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function get_archived_roles() {
+        loading.value = true
+        try {
+            const { data } = await api.get<any>(`role/list/archive`)
+            return data
+        }
+        finally {
+            loading.value = false
+        }
+    }
+
+    async function get_permissions_role(payload: any) {
+        // loading.value = true
+        try {
+            const { data } = await api.get<any>(`permission/role/${payload.id}`)
+            return data
+        }
+        finally {
+            // loading.value = false
+        }
+    }
+
     return {
         get_roles,
+        get_archived_roles,
         get_roles_positions_user,
+        store_role,
+        update_role,
+        delete_role,
+        archive_role,
+        reset_role,
+        archive_role_with_permissions,
+        get_nb_positions,
+        get_nb_personnes,
+        get_permissions_role,
         loading
     } as const
 })

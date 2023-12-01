@@ -9,6 +9,8 @@ export const useUser = defineStore('user', () => {
   const contracts_list_user = ref<any>([])
   const signed_contracts_list_user = ref<any>([])
   const list_user_count = ref()
+  const check_user = ref()
+  const check_email = ref(false)
   const user = ref(null)
 
   async function get_users() {
@@ -16,8 +18,11 @@ export const useUser = defineStore('user', () => {
       const response = await api.get_users();
 
       const usersWithTeamId = response.map(user => {
-        const teamId = user.team_user.length > 0 ? user.team_user[0].team_id : null;
-        return { ...user, team_id: teamId };
+        const teamId = user.teams.length > 0 ? user.teams[0].team_id : null;
+        const departmentId = user.teams.length > 0 ? user.teams[0].team.department_id : null;
+        const positionId = user.positions.length > 0 ? user.positions[0].position.id : null;
+
+        return { ...user, team_id: teamId, department_id: departmentId, position_id: positionId, };
       });
       users_list.value = usersWithTeamId;
     } catch (error) {
@@ -34,6 +39,18 @@ export const useUser = defineStore('user', () => {
       if (index > -1) {
         user.value = users_list.value[index]
       }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_data(payload: any) {
+    try {
+      const response = await api.check_user_data(payload);
+      check_user.value = response;
+      check_email.value = check_user.value.emailExiste
+      console.log("maryem", check_email.value);
+
     } catch (error) {
       console.error(error);
     }
@@ -147,6 +164,7 @@ export const useUser = defineStore('user', () => {
     loading: api.loading,
     store_user,
     update_user,
+    check_email,
     delete_user,
     archive_user,
     unarchive_user,
@@ -157,6 +175,8 @@ export const useUser = defineStore('user', () => {
     get_user_contracts,
     get_user_contracts_model,
     get_user_contracts_signed,
+    check_user_data,
+    check_user,
     signed_contracts_list_user,
     affect_contract_user,
     upload_old_file_contract,

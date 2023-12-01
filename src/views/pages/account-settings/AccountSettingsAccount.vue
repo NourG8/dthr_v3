@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import avatar1 from '@images/avatars/avatar-1.png'
+import avatar1 from '@images/avatars/avatar-1.png';
 
 const accountData = {
   avatarImg: avatar1,
-  firstName: 'john',
-  lastName: 'Doe',
+  first_name: 'john',
+  last_name: 'Doe',
   email: 'johnDoe@example.com',
   org: 'ThemeSelection',
   phone: '+1 (917) 543-9876',
@@ -171,7 +171,7 @@ const currencies = [
                 cols="12"
               >
                 <VTextField
-                  v-model="accountDataLocal.firstName"
+                  v-model="accountDataLocal.first_name"
                   placeholder="John"
                   label="First Name"
                 />
@@ -183,7 +183,7 @@ const currencies = [
                 cols="12"
               >
                 <VTextField
-                  v-model="accountDataLocal.lastName"
+                  v-model="accountDataLocal.last_name"
                   placeholder="Doe"
                   label="Last Name"
                 />

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const firstName = ref('')
+const first_name = ref('')
 const email = ref('')
 const mobile = ref<number>()
 const password = ref<string>()
@@ -16,7 +16,7 @@ const checkbox = ref(false)
             cols="12"
             md="3"
           >
-            <label for="firstName">First Name</label>
+            <label for="first_name">First Name</label>
           </VCol>
 
           <VCol
@@ -24,8 +24,8 @@ const checkbox = ref(false)
             md="9"
           >
             <VTextField
-              id="firstName"
-              v-model="firstName"
+              id="first_name"
+              v-model="first_name"
               placeholder="John"
               persistent-placeholder
             />

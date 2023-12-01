@@ -1,5 +1,24 @@
 <script setup lang="ts">
-import avatar1 from '@images/avatars/avatar-1.png'
+import { useUserSession } from '@/stores/userSession';
+import avatar1 from '@images/avatars/avatar-1.png';
+
+const router = useRouter()
+const userData = JSON.parse(localStorage.getItem('userData') || 'null')
+const { logout } = useUserSession()
+
+
+const local_logout = () => {
+  // Remove "userData" from localStorage
+  logout()
+  localStorage.removeItem('userData')
+
+  // Remove "accessToken" from localStorage
+  localStorage.removeItem('token')
+
+  // Redirect to login page
+  router.push('/login').then(() => {
+  })
+}
 </script>
 
 <template>
@@ -48,7 +67,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{userData.last_name}}   {{userData.last_name}} 
             </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>
@@ -81,7 +100,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
           </VListItem>
 
           <!-- 👉 Pricing -->
-          <VListItem link>
+          <!-- <VListItem link>
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -91,7 +110,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
             </template>
 
             <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
+          </VListItem> -->
 
           <!-- 👉 FAQ -->
           <VListItem link>
@@ -110,7 +129,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem   @click="local_logout">
             <template #prepend>
               <VIcon
                 class="me-2"
