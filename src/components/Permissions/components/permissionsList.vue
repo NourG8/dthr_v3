@@ -18,8 +18,8 @@ onMounted(() => {
 
 const columns = ref([
   { text: '', value: ' ' },
-  { text: 'permission name', value: 'namePermission' },
-  { text: 'description', value: 'description' },
+  { text: 'permission name', value: 'name' },
+  { text: 'guard_name', value: 'guard_name' },
   { text: 'code', value: 'code' },
 ])
 
@@ -27,8 +27,8 @@ const editedIndex= ref(-1)
 
 const editedItem = ref<any>({
   id: null,
-  namePermission: '',
-  description: '',
+  name: '',
+  guard_name: '',
   code: ''
 })
 
@@ -107,9 +107,9 @@ async function archivePermission(item: any) {
         title:
           "Are you sure you want to archive permission" +
           ' ' +
-          item.namePermission.split('.')[0] +
+          item.name.split('.')[0] +
           '(' +
-          item.namePermission.split('.')[1] +
+          item.name.split('.')[1] +
           ')' +
           ' ' +
           '?',
@@ -131,9 +131,9 @@ async function deletePermission(item: any) {
         title:
           "Are you sure you want to delete permission" +
           ' ' +
-          item.namePermission.split('.')[0] +
+          item.name.split('.')[0] +
           '(' +
-          item.namePermission.split('.')[1] +
+          item.name.split('.')[1] +
           ')' +
           ' ' +
           '?',
@@ -164,7 +164,7 @@ async function list_permissions() {
 
 // function resetPermission(item) {
 //               Swal.fire({
-//                   title:"Are you sure you want to reset permission" +'\n'  + item.namePermission.split('.')[0]+ " ( "+item.namePermission.split('.')[1]+" )" + ' ' + '?',
+//                   title:"Are you sure you want to reset permission" +'\n'  + item.name.split('.')[0]+ " ( "+item.name.split('.')[1]+" )" + ' ' + '?',
 //                   showCancelButton: true,
 //                   cancelButtonColor: '#d33',
 //                   confirmButtonColor: '#3085d6',
