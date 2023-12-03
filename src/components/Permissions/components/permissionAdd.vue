@@ -1,11 +1,10 @@
 <script setup lang="ts" >
-import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { lengthValidator, requiredValidator } from '@/@core/utils/validators';
 
 const editedItem = ref({
     id: '',
-    namePermission: '',
-    description: '',
-    code: ''
+    name: '',
+    // guard_name: '',
 });
 
 const emit = defineEmits(['save', 'close']);
@@ -23,11 +22,8 @@ const emitPermissionClose = () => {
 
 function validateForm() {
     return (
-        requiredValidator(editedItem.value.namePermission) === true &&
-        lengthValidator(editedItem.value.namePermission, 30, 5) === true &&
-        requiredValidator(editedItem.value.description) === true && 
-        requiredValidator(editedItem.value.code) === true &&
-        lengthValidator(editedItem.value.code, 30, 3) === true)
+        requiredValidator(editedItem.value.name) === true &&
+        lengthValidator(editedItem.value.name, 30, 5) === true )
 }
 
 </script>
@@ -35,21 +31,14 @@ function validateForm() {
 <template>
     <v-row>
         <v-col>
-            <v-text-field v-model="editedItem.namePermission" label="permission name"
-                :rules="[requiredValidator, lengthValidator(editedItem.namePermission, 30, 5)]"></v-text-field>
+            <v-text-field v-model="editedItem.name" label="permission name"
+                :rules="[requiredValidator, lengthValidator(editedItem.name, 30, 5)]"></v-text-field>
         </v-col>
     </v-row>
 
     <v-row>
         <v-col>
-            <v-text-field v-model="editedItem.code" label="Code"
-                :rules="[requiredValidator , lengthValidator(editedItem.code, 30, 3)]"></v-text-field>
-        </v-col>
-    </v-row>
-
-    <v-row>
-        <v-col>
-            <v-textarea v-model="editedItem.description" label="Description" :rules="[requiredValidator]"></v-textarea>
+            <v-textarea v-model="editedItem.guard_name" label="Description" :rules="[requiredValidator]"></v-textarea>
         </v-col>
     </v-row>
 
