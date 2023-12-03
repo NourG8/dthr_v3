@@ -13,7 +13,6 @@ declare module '@vue/runtime-core' {
     CardStatisticsVertical: typeof import('./src/@core/components/cards/CardStatisticsVertical.vue')['default']
     CardStatisticsWithImages: typeof import('./src/@core/components/cards/CardStatisticsWithImages.vue')['default']
     ContractsList: typeof import('./src/components/Users/components/contractsList.vue')['default']
-    copy: typeof import('./src/components/Permissions/components/permissionAdd copy.vue')['default']
     DataTable: typeof import('./src/components/dataTable/DataTable.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']

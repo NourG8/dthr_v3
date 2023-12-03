@@ -6,7 +6,7 @@ export const useRole = defineStore('role', () => {
 
     const roles_list = ref<any>([])
     const roles_list_archived = ref<any>([])
-    const roles_positions_list = ref<any>([])
+    const role = ref<any>([])
     const permissions_list = ref<any>([])
     const nb_personnes = ref()
     const nb_positions = ref()
@@ -19,10 +19,11 @@ export const useRole = defineStore('role', () => {
         console.log("test", api.loading.value)
     }
 
-    async function get_roles_positions_user(payload: any) {
+    async function get_role(payload: any) {
         try {
-            const response = await api.get_roles_positions_user(payload);
-            roles_positions_list.value = response;
+            const response = await api.get_role(payload);
+            role.value = response;
+            console.log(role.value)
         } catch (error) {
             console.error(error);
         }
@@ -106,7 +107,7 @@ export const useRole = defineStore('role', () => {
     return {
         loading: api.loading,
         get_roles,
-        get_roles_positions_user,
+        get_role,
         store_role,
         update_role,
         delete_role,
@@ -119,7 +120,7 @@ export const useRole = defineStore('role', () => {
         get_permissions_role,
         roles_list,
         roles_list_archived,
-        roles_positions_list,
+        role,
         nb_positions,
         nb_personnes,
         permissions_list,

@@ -9,8 +9,10 @@ export const useUser = defineStore('user', () => {
   const contracts_list_user = ref<any>([])
   const signed_contracts_list_user = ref<any>([])
   const list_user_count = ref()
-  const check_user = ref()
-  const check_email = ref(false)
+  const check_email = ref()
+  const check_email_prof = ref()
+  const check_phone = ref()
+  const check_phone_emergency = ref()
   const user = ref(null)
 
   async function get_users() {
@@ -44,12 +46,40 @@ export const useUser = defineStore('user', () => {
     }
   }
 
-  async function check_user_data(payload: any) {
+  async function check_user_email(payload: any) {
     try {
-      const response = await api.check_user_data(payload);
-      check_user.value = response;
-      check_email.value = check_user.value.emailExiste
-      console.log("maryem", check_email.value);
+      const response = await api.check_user_email(payload);
+      check_email.value = response;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_email_prof(payload: any) {
+    try {
+      const response = await api.check_user_email_prof(payload);
+      check_email_prof.value = response;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_phone(payload: any) {
+    try {
+      const response = await api.check_user_phone(payload);
+      check_phone.value = response;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_phone_emergency(payload: any) {
+    try {
+      const response = await api.check_user_phone_emergency(payload);
+      check_phone_emergency.value = response;
 
     } catch (error) {
       console.error(error);
@@ -101,7 +131,6 @@ export const useUser = defineStore('user', () => {
     const index = users_list.value.indexOf(payload)
     users_list.value.splice(index, 1)
   }
-
 
   async function reset_pwd_user(payload: any) {
     const response = await api.reset_pwd_user(payload)
@@ -156,8 +185,8 @@ export const useUser = defineStore('user', () => {
 
     const index = signed_contracts_list_user.value.indexOf(payload)
     signed_contracts_list_user.value.splice(index, 1)
-    console.log(signed_contracts_list_user.value)
-    console.log("response : ", response)
+    // console.log(signed_contracts_list_user.value)
+    // console.log("response : ", response)
   }
 
   return {
@@ -165,6 +194,12 @@ export const useUser = defineStore('user', () => {
     store_user,
     update_user,
     check_email,
+    check_email_prof,
+    check_phone,
+    check_phone_emergency,
+    check_user_phone,
+    check_user_email_prof,
+    check_user_phone_emergency,
     delete_user,
     archive_user,
     unarchive_user,
@@ -175,8 +210,7 @@ export const useUser = defineStore('user', () => {
     get_user_contracts,
     get_user_contracts_model,
     get_user_contracts_signed,
-    check_user_data,
-    check_user,
+    check_user_email,
     signed_contracts_list_user,
     affect_contract_user,
     upload_old_file_contract,

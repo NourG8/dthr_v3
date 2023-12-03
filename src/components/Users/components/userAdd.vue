@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Validation, dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, phoneExistsValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { checkEmail, checkEmailProf, dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
 import { useCompany } from '@/stores/company';
 import { useDepartment } from '@/stores/department';
 import { usePosition } from '@/stores/position';
@@ -18,8 +18,8 @@ const { get_companies } = useCompany()
 const { companies_list } = storeToRefs(useCompany())
 
 // Store user
-const { get_users, store_user , check_user_data} = useUser()
-const { users_list, check_user , check_email , loading } = storeToRefs(useUser())
+const { get_users, store_user , check_user_email , check_user_phone_emergency, check_user_phone} = useUser()
+const { users_list, check_email , check_phone , check_phone_emergency, loading } = storeToRefs(useUser())
 
 const editedItem = reactive({
   // Les champs de la première étape
@@ -80,8 +80,6 @@ onMounted(async () => {
   // console.log(company.value.max_cin)
   getCinAndPassportArray()
   await updateTeamList()
-  console.log(team_list.value)
-  console.log(departments_list.value)
 
   editedItem.nationality = company.value.nationality
   editedItem.motivation = listDragAndDrop.value
@@ -142,7 +140,7 @@ function checkMove(e){
   draggedItem.id = replacedItem.id;
   replacedItem.id = tempId;
   editedItem.motivation = listDragAndDrop.value
-  console.log(editedItem.motivation)
+  // console.log(editedItem.motivation)
 }
 
 function isCardIdAndCinRequired() {
@@ -224,9 +222,11 @@ function validateStep1() {
     requiredValidator(editedItem.email) === true &&
     emailValidator(editedItem.email) === true &&
     emailValidator(editedItem.email_prof) === true &&
+    // checkEmail(editedItem.email ) !==  'email exist' &&
+    // checkEmailProf(editedItem.email_prof ) !==  'email exist' &&
     editedItem.phone != ''&& editedItem.phone_emergency &&
     validationPhoneError.value === 'valid' &&
-    validationphone_emergencyError.value === 'valid'
+    validationphoneEmergencyError.value === 'valid'
   );
 }
 
@@ -298,7 +298,7 @@ function validateStep6() {
 const phoneNumber = ref('')
 const selectedCountry = ref({ valid: false });
 const validationPhoneError = ref('');
-const validationphone_emergencyError = ref('');
+const validationphoneEmergencyError = ref('');
 
 const customPhoneValidation = async (value, country) => {
   while (!country) {
@@ -308,19 +308,21 @@ const customPhoneValidation = async (value, country) => {
   phoneNumber.value = value;
   editedItem.phone = value
 
-  // await check_user_data(editedItem)
-  // console.log("test test : ",check_user.value.phoneExiste)
+  await check_user_phone(value)
+  // console.log("test test : ",check_phone.value)
     
   if (selectedCountry.value.valid === undefined ) {
     validationPhoneError.value = '';
   }else if(selectedCountry.value.valid === false){
     validationPhoneError.value = 'Phone number is invalide !';
-  }else{
+  }else if(check_phone.value === true){
+    validationPhoneError.value = 'Phone number exist !';
+  }else if(selectedCountry.value.valid === true && check_phone.value === false){
     validationPhoneError.value = 'valid';
   }
 }
 
-const customphone_emergencyValidation = async (value, country) => {
+const customphoneEmergencyValidation = async (value, country) => {
   while (!country) {
     await new Promise(resolve => setTimeout(resolve, 100)); // Attend 100ms
   }
@@ -328,23 +330,21 @@ const customphone_emergencyValidation = async (value, country) => {
   phoneNumber.value = value;
   editedItem.phone_emergency = value  
 
-  // await check_user_data(editedItem)
+  await check_user_phone_emergency(value)
+ 
+  console.log("test test : ",check_phone_emergency.value)
 
    if (selectedCountry.value.valid === undefined ) {
-    validationphone_emergencyError.value = '';
+    validationphoneEmergencyError.value = '';
   }else if (selectedCountry.value.valid === false) {
-    validationphone_emergencyError.value = 'Phone number is invalide !';
-  } else {
-    validationphone_emergencyError.value ='valid';
+    validationphoneEmergencyError.value = 'Phone number is invalide !';
+  } else if(check_phone_emergency.value === true){
+    validationphoneEmergencyError.value = 'Phone number exist !';
+  }else if(selectedCountry.value.valid === true && check_phone_emergency.value === false){
+    validationphoneEmergencyError.value ='valid';
   }
 }
 
-// const check_email = ref(false);
-const check_email_prof = ref(false);
-const check_phone = ref(false);
-const check_phone_emergency = ref(false);
-const check_cin = ref(false);
-const check_passport = ref(false);
 // async function emailValidation (data){
 //   await check_user_data(data)
 
@@ -457,7 +457,6 @@ function validateCIN() {
               :rules="[requiredValidator, lengthValidator(editedItem.first_name, 30, 3)]"></v-text-field>
           </v-col>
         </v-row>
-
         <v-row>
           <v-col>
             <v-text-field v-model="editedItem.date_birth" label="Date de naissance" type="date"
@@ -492,30 +491,30 @@ function validateCIN() {
 
         <v-row>
           <v-col>
-            {{ check_user }}
-            <v-text-field v-model="editedItem.email" label="Email" @update:model-value="check_user_data(editedItem)"
-              :rules="[requiredValidator, emailValidator(editedItem.email) ] "></v-text-field>
+            <v-text-field v-model="editedItem.email" label="Email" 
+              :rules="[requiredValidator, emailValidator(editedItem.email) , checkEmail(editedItem.email ) ] "></v-text-field>
           </v-col>
           <v-col>
-            <v-text-field v-model="editedItem.email_prof" label="Email professionnel" @update:model-value="emailValidation(editedItem)"
-              :rules="[emailValidator(editedItem.email_prof) , (v) => check_email_prof ]"></v-text-field>
+            <v-text-field v-model="editedItem.email_prof" label="Email professionnel" 
+              :rules="[emailValidator(editedItem.email_prof) ,checkEmailProf(editedItem.email_prof )  ]"></v-text-field>
+              <!-- (v) => check_email_prof  -->
           </v-col>
         </v-row>
 
         <v-row>
           <v-col>
             <vue-tel-input v-model:value="editedItem.phone" type="number" mode="international"
-              :class="{ 'custom-input': validationPhoneError !=='Phone number is invalide !', 'custom-input error-tel-input': validationPhoneError === 'Phone number is invalide !' }"
-              :rules="[requiredValidator(editedItem.phone), vueTelInputValidator(selectedCountry) , phoneExistsValidator(editedItem)]" @input="customPhoneValidation">
+              :class="{ 'custom-input': (validationPhoneError !=='Phone number is invalide !', validationPhoneError !== 'Phone number exist !' ) , 'custom-input error-tel-input': (validationPhoneError === 'Phone number is invalide !', validationPhoneError === 'Phone number exist !') }"
+              :rules="[requiredValidator(editedItem.phone), vueTelInputValidator(selectedCountry) ]" @input="customPhoneValidation" >
             </vue-tel-input>
             <div class="error-message v-input__details v-messages__message"  v-if="validationPhoneError !== 'valid'">{{ validationPhoneError }}</div>
           </v-col>
           <v-col>
             <vue-tel-input v-model:value="editedItem.phone_emergency" type="number" mode="international"
-              :class="{ 'custom-input': validationphone_emergencyError  !=='Phone number is invalide !', 'custom-input error-tel-input': validationphone_emergencyError === 'Phone number is invalide !' }"
-              :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customphone_emergencyValidation">
+              :class="{ 'custom-input': (validationphoneEmergencyError  !=='Phone number is invalide !' , validationphoneEmergencyError !== 'Phone number exist !' ), 'custom-input error-tel-input': (validationphoneEmergencyError === 'Phone number is invalide !' ,  validationphoneEmergencyError === 'Phone number exist !' )}"
+              :rules="[requiredValidator, vueTelInputValidator(selectedCountry)]" @input="customphoneEmergencyValidation">
             </vue-tel-input>
-            <div class="error-message v-input__details v-messages__message" v-if="(validationphone_emergencyError !== 'valid')">{{ validationphone_emergencyError }}</div>
+            <div class="error-message v-input__details v-messages__message" v-if="(validationphoneEmergencyError !== 'valid')">{{ validationphoneEmergencyError }}</div>
           </v-col>
         </v-row>
 

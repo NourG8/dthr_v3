@@ -61,14 +61,47 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
-  async function check_user_data(payload: any) {
+  async function check_user_email(payload: any) {
     try {
-      const { data } = await api.post<any>(`users/check-data`, payload)
+      const { data } = await api.post<any>(`users/check-email`, { "email": payload })
 
       return data
     }
     finally {
-     
+
+    }
+  }
+
+  async function check_user_email_prof(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-email-prof`, { "email_prof": payload })
+
+      return data
+    }
+    finally {
+
+    }
+  }
+
+  async function check_user_phone(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-phone`, { "phone": payload })
+
+      return data
+    }
+    finally {
+
+    }
+  }
+
+  async function check_user_phone_emergency(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-phone-emergency`, { "phone_emergency": payload })
+
+      return data
+    }
+    finally {
+
     }
   }
 
@@ -433,6 +466,9 @@ export const useUserApi = createSharedComposable(() => {
     me,
     verifCode,
     updatePicture,
-    check_user_data
+    check_user_email,
+    check_user_phone,
+    check_user_email_prof,
+    check_user_phone_emergency
   } as const
 })

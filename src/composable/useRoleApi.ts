@@ -32,10 +32,10 @@ export const useRoleApi = createSharedComposable(() => {
         }
     }
 
-    async function get_roles_positions_user(payload: any) {
+    async function get_role(payload: any) {
         loading.value = true
         try {
-            const { data } = await api.get<any>(`roles/positions/users/${payload.id}`)
+            const { data } = await api.get<any>(`roles/${payload.id}`)
             return data
         }
         finally {
@@ -156,7 +156,7 @@ export const useRoleApi = createSharedComposable(() => {
     return {
         get_roles,
         get_archived_roles,
-        get_roles_positions_user,
+        get_role,
         store_role,
         update_role,
         delete_role,

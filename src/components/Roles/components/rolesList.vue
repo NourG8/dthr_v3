@@ -18,16 +18,16 @@ onMounted(() => {
 
 const columns = ref([
   { text: '', value: ' ' },
-  { text: 'role name', value: 'role' },
-  { text: 'description', value: 'description' },
+  { text: 'name', value: 'name' },
+  { text: 'guard_name', value: 'guard_name' },
 ])
 
 const editedIndex= ref(-1)
 
 const editedItem = ref<any>({
   id: null,
-  role: '',
-  description: '',
+  name: '',
+  guard_name: '',
   status: ''
 })
 
