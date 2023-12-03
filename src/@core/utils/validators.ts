@@ -6,8 +6,8 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 // const { getTranslationT } = useLocales()
 // const translate = getTranslationT()
 
-const { get_users, store_user, check_user_data } = useUser()
-const { users_list, check_user, loading } = storeToRefs(useUser())
+const { get_users, store_user, check_user_email, check_user_email_prof, check_user_phone } = useUser()
+const { check_email_prof, check_phone, check_email, loading } = storeToRefs(useUser())
 
 const checkIsLottie = files => {
   return new Promise(resolve => {
@@ -23,6 +23,31 @@ const checkIsLottie = files => {
     }
     fileReader.readAsText(files[0])
   })
+}
+
+export const checkEmail = async (value: unknown) => {
+  await check_user_email(value)
+
+  if (check_email.value) {
+    return 'email exist';
+  }
+}
+
+export const checkEmailProf = async (value: unknown) => {
+  await check_user_email_prof(value)
+
+  if (check_email_prof.value) {
+    return 'email exist';
+  }
+}
+
+export const checkPhone = async (value: unknown) => {
+  await check_user_phone(value)
+  // console.log("test", value);
+
+  if (check_phone.value) {
+    return 'phone exist';
+  }
 }
 
 export const requiredValidator = (value: unknown) => {

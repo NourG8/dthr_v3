@@ -24,7 +24,6 @@ export const usePermissionApi = createSharedComposable(() => {
         loading.value = true
         try {
             const { data } = await api.get<any>(`permissions`)
-            console.log("api", loading.value)
             return data
         }
         finally {

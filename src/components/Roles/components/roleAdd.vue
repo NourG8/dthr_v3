@@ -1,11 +1,21 @@
 <script setup lang="ts" >
-import { dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { lengthValidator, requiredValidator } from '@/@core/utils/validators';
+import { usePermission } from '@/stores/permission';
+
+// Store permission
+const { get_permissions } = usePermission()
+const { permissions_list } = storeToRefs(usePermission())
 
 const editedItem = ref({
-    id: '',
-    role: '',
-    description: ''
+    // id: '',  
+    name: '',
+    // guard_name: '',
+    permissions : []
 });
+
+onMounted(async () => {
+    await get_permissions()
+})
 
 const emit = defineEmits(['save', 'close']);
 
@@ -22,9 +32,11 @@ const emitRoleClose = () => {
 
 function validateForm() {
     return (
-        requiredValidator(editedItem.value.role) === true &&
-        lengthValidator(editedItem.value.role, 30, 5) === true &&
-        requiredValidator(editedItem.value.description) === true)
+        requiredValidator(editedItem.value.name) === true &&
+        lengthValidator(editedItem.value.name, 30, 5) === true 
+        // &&
+        // requiredValidator(editedItem.value.guard_name) === true
+        )
 }
 
 </script>
@@ -32,14 +44,28 @@ function validateForm() {
 <template>
     <v-row>
         <v-col>
-            <v-text-field v-model="editedItem.role" label="Role name"
-                :rules="[requiredValidator, lengthValidator(editedItem.role, 30, 5)]"></v-text-field>
+            <v-text-field v-model="editedItem.name" label="Role name"
+                :rules="[requiredValidator, lengthValidator(editedItem.name, 30, 5)]"></v-text-field>
         </v-col>
     </v-row>
 
+    <!-- <v-row>
+        <v-col>
+            <v-textarea v-model="editedItem.guard_name" label="Description" :rules="[requiredValidator]"></v-textarea>
+        </v-col>
+    </v-row> -->
+
     <v-row>
         <v-col>
-            <v-textarea v-model="editedItem.description" label="Description" :rules="[requiredValidator]"></v-textarea>
+        <VSelect
+                v-model="editedItem.permissions"
+                multiple
+                :items="permissions_list"
+                item-value="id"
+                item-title="name"
+                plqce
+                outlined dense placeholder="select permissions"
+        />
         </v-col>
     </v-row>
 
