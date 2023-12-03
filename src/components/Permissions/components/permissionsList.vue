@@ -1,10 +1,8 @@
 <script setup lang="ts">
 
-import permissionDetails from '@/components/Permissions/components/permissionDetails.vue';
 import { useNotyf } from '@/composable/useNotyf';
 import { usePermission } from '@/stores/permission';
 import Swal from 'sweetalert2';
-
 // Store permission
 const { get_permissions ,get_archived_permissions , store_permission , update_permission, delete_permission , archive_permission , reset_permission} = usePermission()
 const { permissions_list , permissions_list_archived  , loading } = storeToRefs(usePermission())
@@ -20,7 +18,6 @@ const columns = ref([
   { text: '', value: ' ' },
   { text: 'permission name', value: 'name' },
   { text: 'guard_name', value: 'guard_name' },
-  { text: 'code', value: 'code' },
 ])
 
 const editedIndex= ref(-1)
