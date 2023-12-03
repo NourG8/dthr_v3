@@ -36,12 +36,6 @@ function validateForm() {
         </v-col>
     </v-row>
 
-    <v-row>
-        <v-col>
-            <v-textarea v-model="editedItem.guard_name" label="Description" :rules="[requiredValidator]"></v-textarea>
-        </v-col>
-    </v-row>
-
     <v-card-actions class="mt-4">
         <span></span>
         <v-spacer></v-spacer>
