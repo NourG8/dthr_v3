@@ -6,7 +6,7 @@ import { useRole } from '@/stores/role';
 import Swal from 'sweetalert2';
 
 // Store role
-const { get_roles ,get_archived_roles , store_role , update_role, delete_role , archive_role , reset_role,  archive_role_with_permissions, get_nb_personnes , get_nb_positions , get_permissions_role } = useRole()
+const { get_roles ,get_archived_roles , store_role , update_role, delete_role , archive_role , reset_role, get_nb_personnes , get_nb_positions , get_permissions_role } = useRole()
 const { roles_list , roles_list_archived , nb_personnes , nb_positions , nb_permissions , permissions_list , loading } = storeToRefs(useRole())
 
 const notyf = useNotyf()
@@ -103,81 +103,24 @@ function closeEdit() {
 
 const nbPer = ref(null)
 const nbPos = ref(null)
-async function archiveRole(item: any) {
-      nbPer.value = null
-      nbPos.value = null
-
-      await get_nb_positions(item)
-      nbPos.value = nb_positions.value
-
-      await get_nb_personnes(item)
-      nbPer.value = nb_personnes.value
-      // console.log(nbPer.value);
-      // console.log(nbPos.value);
-      //archiver
-      if (nbPos.value == 0 && nbPer.value == 0) {
-        Swal.fire({
-          title: "Archive role ?",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          showCancelButton: true,
-          confirmButtonText: "Archive",
-          cancelButtonText: "Cancel",
-        }).then(result => {
-          if (result.isConfirmed) {
-            archive_role(item)
-            Swal.fire( 'role succes archived !')
-          }
-        })
-      }
-      //archiver
-      else if (nbPos.value == 0 && nbPer.value != 0) {
-        Swal.fire({
-          title: "Archive role with permisions ?",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          showCancelButton: true,
-          confirmButtonText: "Archive",
-          cancelButtonText: 'Cancel',
-        }).then(result => {
-          if (result.isConfirmed) {
-            archive_role_with_permissions(item)
-            Swal.fire( 'role and permissions succes archived !')
-          }
-        })
-      } else if (nbPos.value != 0 && nbPer.value == 0) {
-        Swal.fire({
-          title:"you cannot archive this role",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ok',
-        })
-      } else if (nbPos.value != 0 && nbPer.value != 0) {
-        Swal.fire({
-          title:"you cannot archive this role",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ok',
-        })
-      }
-}
+// async function archiveRole(item: any) {
+//         Swal.fire({
+//           title: "Archive role ?",
+//           cancelButtonColor: '#d33',
+//           icon: 'info',
+//           confirmButtonColor: '#3085d6',
+//           showCancelButton: true,
+//           confirmButtonText: "Archive",
+//           cancelButtonText: "Cancel",
+//         }).then(result => {
+//           if (result.isConfirmed) {
+//             archive_role(item)
+//             Swal.fire( 'role succes archived !')
+//           }
+//         })
+// }
 
 async function deleteRole(item: any) {
-      nbPer.value = null
-      nbPos.value = null
-
-      await get_nb_positions(item)
-      nbPos.value = nb_positions.value
-
-      await get_nb_personnes(item)
-      nbPer.value = nb_personnes.value
-     
-      //archiver
-      if (nbPos.value == 0 && nbPer.value == 0) {
         Swal.fire({
           title: "Delete role ?",
           cancelButtonColor: '#d33',
@@ -191,41 +134,7 @@ async function deleteRole(item: any) {
             delete_role(item)
             Swal.fire( 'role succes deleted !')
           }
-        })
-      }
-      //archiver
-      else if (nbPos.value == 0 && nbPer.value != 0) {
-        Swal.fire({
-          title: "Delete role with permisions ?",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          showCancelButton: true,
-          confirmButtonText: "Delete",
-          cancelButtonText: 'Cancel',
-        }).then(result => {
-          if (result.isConfirmed) {
-            delete_role(item)
-            Swal.fire( 'role and permissions succes deleted !')
-          }
-        })
-      } else if (nbPos.value != 0 && nbPer.value == 0) {
-        Swal.fire({
-          title:"you cannot delete this role",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ok',
-        })
-      } else if (nbPos.value != 0 && nbPer.value != 0) {
-        Swal.fire({
-          title:"you cannot delete this role",
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ok',
-        })
-      }
+        })  
 }
 
 const archive = ref(false)
@@ -242,33 +151,7 @@ async function list_roles() {
   // console.log(roles_list.value)
 }
 
-async function reset_role_with_permissions(item :any) {
-      await get_permissions_role(item)
-      // console.log("permissions : ",permissions_list.value)
-
-      if (permissions_list.value.length != 0) {
-        let list = []
-        let i = 0
-        permissions_list.value.forEach(element => {
-          list.push(element)
-          i++;
-        })
-        Swal.fire({
-          title:'Reset role ? \n',
-          cancelButtonColor: '#d33',
-          icon: 'info',
-          confirmButtonColor: '#3085d6',
-          showCancelButton: true,
-          confirmButtonText:'Reset',
-          cancelButtonText: 'Cancel',
-        }).then((result) => {
-          if (result.isConfirmed) {
-              reset_role_with_permissions(item)
-              get_archived_roles()
-              Swal.fire('Reset role with permissions sucess !')
-          }
-        })
-      } else {
+async function resetRole(item :any) {
         Swal.fire({
           title:'Reset role ? \n',
           cancelButtonColor: '#d33',
@@ -283,7 +166,6 @@ async function reset_role_with_permissions(item :any) {
             Swal.fire('Reset role sucess !')
           }
         })
-      }
   }
 
 </script>
@@ -366,14 +248,14 @@ async function reset_role_with_permissions(item :any) {
     </template>
 
     <template #actions="activity">
-      <VTooltip :text="'details'" location="bottom">
+      <!-- <VTooltip :text="'details'" location="bottom">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
             @click="detailsRole(activity.data)">
             <VIcon size="24" icon="mdi-account-search" />
           </VBtn>
         </template>
-      </VTooltip>
+      </VTooltip> -->
       <VTooltip :text="'edit'" location="bottom" v-if="archive=== false" >
         <template #activator="{ props }">
           <VBtn v-bind="props" variant="outlined" color="primary" size="small" @click="editRole(activity.data)">
@@ -389,18 +271,18 @@ async function reset_role_with_permissions(item :any) {
           </VBtn>
         </template>
       </VTooltip> -->
-      <VTooltip :text="'archive'" location="bottom" v-if="archive=== false">
+      <!-- <VTooltip :text="'archive'" location="bottom" v-if="archive=== false">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
             @click="archiveRole(activity.data)">
             <VIcon size="24" icon="mdi-account-cancel" />
           </VBtn>
         </template>
-      </VTooltip>
+      </VTooltip> -->
       <VTooltip :text="'unarchive'" location="bottom" v-if="archive=== true">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
-            @click="reset_role_with_permissions(activity.data)">
+            @click="resetRole(activity.data)">
             <VIcon size="24" icon="mdi-account-reactivate" />
           </VBtn>
         </template>

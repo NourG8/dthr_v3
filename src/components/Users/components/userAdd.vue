@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { checkEmail, checkEmailProf, dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
+import { checkCin, checkEmail, checkEmailProf, checkPassport, dateIntegrationValidator, dateMin18Max100Validator, dateMinNowMax100Validator, emailValidator, integerValidator, lengthValidator, requiredValidator, vueTelInputValidator } from '@/@core/utils/validators';
 import { useCompany } from '@/stores/company';
 import { useDepartment } from '@/stores/department';
 import { usePosition } from '@/stores/position';
@@ -18,8 +18,8 @@ const { get_companies } = useCompany()
 const { companies_list } = storeToRefs(useCompany())
 
 // Store user
-const { get_users, store_user , check_user_email , check_user_phone_emergency, check_user_phone} = useUser()
-const { users_list, check_email , check_phone , check_phone_emergency, loading } = storeToRefs(useUser())
+const { get_users, store_user , check_user_email , check_user_phone_emergency, check_user_phone , check_user_passport , check_user_cin } = useUser()
+const { users_list, check_email , check_phone ,check_cin ,check_passport , check_phone_emergency, loading } = storeToRefs(useUser())
 
 const editedItem = reactive({
   // Les champs de la première étape
@@ -76,7 +76,7 @@ onMounted(async () => {
   // console.log("department : ",departments_list.value)
 
   await get_companies()
-  await getregime_social()
+  await getRegimeSocial()
   // console.log(company.value.max_cin)
   getCinAndPassportArray()
   await updateTeamList()
@@ -86,12 +86,12 @@ onMounted(async () => {
 });
 
 const company = ref()
-const regime_socialOptions = ref([]);
+const regimeSocialOptions = ref([]);
 const nationality = ref()
-async function getregime_social() {
+async function getRegimeSocial() {
   company.value = JSON.parse(localStorage.getItem('companyData'));
   nationality.value = company.value.nationality;
-  regime_socialOptions.value = JSON.parse(company.value.regime_social)
+  regimeSocialOptions.value = JSON.parse(company.value.regime_social)
 }
 
 function getCinAndPassportArray() {
@@ -144,7 +144,7 @@ function checkMove(e){
 }
 
 function isCardIdAndCinRequired() {
-  validatenum_passport()
+  validateNumPassport()
   validatecarte_id()
   validateCIN()
 
@@ -243,18 +243,18 @@ function validateStep3() {
   && lengthValidator(editedItem.delivery_place_cin , 30,3) === true && editedItem.num_passport === ''
 ) {
     // Cas 1
-    // console.log("step 3 cas 1 ")
+    console.log("step 3 cas 1 ")
     return true
-  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && editedItem.num_passport 
+  } else if (isCardIdAndCinRequired() === false && validateCIN()['error-tel-input'] === false && validateNumPassport()['error-tel-input'] === false && editedItem.num_passport 
   && requiredValidator(editedItem.delivery_date_cin) === true && dateMinNowMax100Validator(editedItem.delivery_date_cin) === true  
   && requiredValidator(editedItem.delivery_place_cin) === true  && lengthValidator(editedItem.delivery_place_cin , 30,3) === true
   && lengthValidator(editedItem.num_passport,company.value.max_passport,company.value.min_passport) === true) {
     // Cas 2
-    // console.log("step 3 cas 2 ")
+    console.log("step 3 cas 2 ")
     return true
   } else if(isCardIdAndCinRequired() === true && requiredValidator(editedItem.carte_id) === true && lengthValidator(editedItem.carte_id, 50, 3) === true && isValidPassport.value ){
     // Cas 3
-    //  console.log("step 3 cas 3 ")
+     console.log("step 3 cas 3 ")
     return true
   }else{
     return false
@@ -345,30 +345,24 @@ const customphoneEmergencyValidation = async (value, country) => {
   }
 }
 
-// async function emailValidation (data){
-//   await check_user_data(data)
-
-//   // console.log("helmi", check_user.value.emailExiste)
-//   // check_email.value = check_user.value.emailExiste
-  
- 
-   
-// }
-
 const isValidPassport = ref()
-const messageValidnum_passport = ref('')
-function validatenum_passport() {
+const messageValidNumPassport = ref('')
+function validateNumPassport() {
   const isNationality = editedItem.nationality === company.value.nationality;
 
   if (editedItem.num_passport && lengthValidator(editedItem.num_passport,company.value.max_passport,company.value.min_passport) != true){
     // console.log("test 2")
     isValidPassport.value = false
-    messageValidnum_passport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
+    messageValidNumPassport.value = `Passport number must be between ${company.value.min_passport} and ${company.value.max_passport} characters !`
+  }else if(check_passport.value === true){
+    console.log("mawjouda cin !")
+    isValidPassport.value = false;
+    messageValidNumPassport.value = 'Passport number exist !';
   }
   else{
     // console.log("test 3")
     isValidPassport.value = true
-    messageValidnum_passport.value = ""
+    messageValidNumPassport.value = ""
   }
 
   return {
@@ -419,6 +413,10 @@ function validateCIN() {
     // console.log("cin test 2")
     isValidCIN.value = false;
     messageValidCIN.value = `Cin number must be between ${company.value.min_cin} and ${company.value.max_cin} characters !`;
+  }else if(check_cin.value === true){
+    // console.log("mawjouda cin !")
+    isValidCIN.value = false;
+    messageValidCIN.value = 'Cin number exist !';
   } else {
     // console.log("cin ntest 3")
     isValidCIN.value = true;
@@ -445,9 +443,11 @@ function validateCIN() {
 
   <v-row>
     <v-col>
+      
       <div v-if="currentStep === 0">
         <!-- Contenu de l'étape Generale -->
         <v-row>
+
           <v-col>
             <v-text-field v-model="editedItem.last_name" label="Nom"
               :rules="[requiredValidator, lengthValidator(editedItem.last_name, 30, 3)]"></v-text-field>
@@ -552,7 +552,6 @@ function validateCIN() {
           </v-col>
         </v-row>
       </div>
-
       <div v-else-if="currentStep === 3">
         <!-- Contenu de l'étape Identity -->
         <v-row>
@@ -564,13 +563,14 @@ function validateCIN() {
               ref="otpInput"
               v-model:value="editedItem.num_passport"
               separator="-"
-              :input-classes="validatenum_passport()"
+              :input-classes="validateNumPassport()"
               :num-inputs="company.max_passport"
               input-type="letter-numeric"
               :conditionalClass="['one', 'two', 'three', 'four']"
+              @input="checkPassport(editedItem.num_passport)"
             ></v-otp-input>
             <div v-if="!isValidPassport.value" class="error-message v-input__details v-messages__message">
-             {{ messageValidnum_passport }}
+             {{ messageValidNumPassport }}
             </div>
           </v-col>
           <v-col cols="12" md="4" class="mt-2 md:mt-0">
@@ -593,7 +593,10 @@ function validateCIN() {
             <v-otp-input ref="otpInput" v-model:value="editedItem.cin" separator="-"
               :num-inputs="company.max_cin" input-type="numeric"
               :placeholder="['*', '*', '*', '*', '*', '*', '*', '*']"
-              :input-classes="validateCIN() "  />
+              :input-classes="validateCIN()"  @input="checkCin(editedItem.cin)" />
+              <div v-if="!isValidCIN.value" class="error-message v-input__details v-messages__message">
+             {{ messageValidCIN }}
+            </div>
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field type="date" v-model="editedItem.delivery_date_cin" label="Date de délivrance CIN"
@@ -710,7 +713,7 @@ function validateCIN() {
 
         <v-row>
           <v-col>
-            <v-select v-model="editedItem.regime_social" :items="regime_socialOptions" item-title="regime_social"
+            <v-select v-model="editedItem.regime_social" :items="regimeSocialOptions" item-title="regime_social"
               item-value="regime_social" label="Régime social"  :rules="[requiredValidator]"></v-select>
           </v-col>
           <v-col>

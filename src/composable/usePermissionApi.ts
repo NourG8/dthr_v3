@@ -67,7 +67,7 @@ export const usePermissionApi = createSharedComposable(() => {
     async function delete_permission(payload: any) {
         loading.value = true
         try {
-            const { data } = await api.get<any>(`permissions/delete/${payload.id}`)
+            const { data } = await api.delete<any>(`permissions/${payload.id}`)
             return data
         }
         finally {
@@ -89,7 +89,7 @@ export const usePermissionApi = createSharedComposable(() => {
     async function reset_permission(payload: any) {
         loading.value = true
         try {
-            const { data } = await api.put<any>(`permission/reset/${payload.id}`)
+            const { data } = await api.put<any>(`permissions/restore/${payload.id}`)
             return data
         }
         finally {
@@ -100,7 +100,7 @@ export const usePermissionApi = createSharedComposable(() => {
     async function get_archived_permissions() {
         loading.value = true
         try {
-            const { data } = await api.get<any>(`permission/list/archive`)
+            const { data } = await api.get<any>(`permissions/archive`)
             return data
         }
         finally {

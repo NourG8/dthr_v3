@@ -6,8 +6,8 @@ import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 // const { getTranslationT } = useLocales()
 // const translate = getTranslationT()
 
-const { get_users, store_user, check_user_email, check_user_email_prof, check_user_phone } = useUser()
-const { check_email_prof, check_phone, check_email, loading } = storeToRefs(useUser())
+const { get_users, store_user, check_user_email, check_user_email_prof, check_user_phone, check_user_cin, check_user_passport } = useUser()
+const { check_email_prof, check_phone, check_email, check_phone_emergency , check_cin, check_passport, loading } = storeToRefs(useUser())
 
 const checkIsLottie = files => {
   return new Promise(resolve => {
@@ -47,6 +47,33 @@ export const checkPhone = async (value: unknown) => {
 
   if (check_phone.value) {
     return 'phone exist';
+  }
+}
+
+
+export const checkPhoneEmergency = async (value: unknown) => {
+  await check_user_phone(value)
+  // console.log("test", value);
+
+  if (check_phone_emergency.value) {
+    return 'phone exist';
+  }
+}
+export const checkCin = async (value: unknown) => {
+  await check_user_cin(value)
+  // console.log("test", value);
+
+  if (check_cin.value) {
+    return 'cin exist';
+  }
+}
+
+export const checkPassport = async (value: unknown) => {
+  await check_user_passport(value)
+  // console.log("test", value);
+
+  if (check_passport.value) {
+    return 'passport exist';
   }
 }
 

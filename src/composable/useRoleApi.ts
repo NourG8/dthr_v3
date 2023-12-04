@@ -68,7 +68,7 @@ export const useRoleApi = createSharedComposable(() => {
     async function delete_role(payload: any) {
         loading.value = true
         try {
-            const { data } = await api.get<any>(`roles/delete/${payload.id}`)
+            const { data } = await api.delete<any>(`roles/${payload.id}`)
             return data
         }
         finally {
@@ -112,7 +112,7 @@ export const useRoleApi = createSharedComposable(() => {
     async function reset_role(payload: any) {
         loading.value = true
         try {
-            const { data } = await api.put<any>(`role/reset/${payload.id}`)
+            const { data } = await api.put<any>(`roles/restore/${payload.id}`)
             return data
         }
         finally {
@@ -134,7 +134,7 @@ export const useRoleApi = createSharedComposable(() => {
     async function get_archived_roles() {
         loading.value = true
         try {
-            const { data } = await api.get<any>(`role/list/archive`)
+            const { data } = await api.get<any>(`roles/archive`)
             return data
         }
         finally {

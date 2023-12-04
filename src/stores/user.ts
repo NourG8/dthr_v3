@@ -13,6 +13,8 @@ export const useUser = defineStore('user', () => {
   const check_email_prof = ref()
   const check_phone = ref()
   const check_phone_emergency = ref()
+  const check_cin = ref()
+  const check_passport = ref()
   const user = ref(null)
 
   async function get_users() {
@@ -80,6 +82,26 @@ export const useUser = defineStore('user', () => {
     try {
       const response = await api.check_user_phone_emergency(payload);
       check_phone_emergency.value = response;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_cin(payload: any) {
+    try {
+      const response = await api.check_user_cin(payload);
+      check_cin.value = response;
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function check_user_passport(payload: any) {
+    try {
+      const response = await api.check_user_passport(payload);
+      check_passport.value = response;
 
     } catch (error) {
       console.error(error);
@@ -197,6 +219,10 @@ export const useUser = defineStore('user', () => {
     check_email_prof,
     check_phone,
     check_phone_emergency,
+    check_cin,
+    check_passport,
+    check_user_passport,
+    check_user_cin,
     check_user_phone,
     check_user_email_prof,
     check_user_phone_emergency,

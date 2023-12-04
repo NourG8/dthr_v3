@@ -99,29 +99,29 @@ function closeEdit() {
   dialogEdit.value = false
 }
 
-async function archivePermission(item: any) {
-    Swal.fire({
-        title:
-          "Are you sure you want to archive permission" +
-          ' ' +
-          item.name.split('.')[0] +
-          '(' +
-          item.name.split('.')[1] +
-          ')' +
-          ' ' +
-          '?',
-        showCancelButton: true,
-        cancelButtonColor: '#d33',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Archive',
-        cancelButtonText: 'Cancel',
-      }).then(result => {
-        if (result.isConfirmed) {
-          archive_permission(item)
-          Swal.fire('Archived successfully!')
-        }
-      })
-}
+// async function archivePermission(item: any) {
+//     Swal.fire({
+//         title:
+//           "Are you sure you want to archive permission" +
+//           ' ' +
+//           item.name.split('.')[0] +
+//           '(' +
+//           item.name.split('.')[1] +
+//           ')' +
+//           ' ' +
+//           '?',
+//         showCancelButton: true,
+//         cancelButtonColor: '#d33',
+//         confirmButtonColor: '#3085d6',
+//         confirmButtonText: 'Archive',
+//         cancelButtonText: 'Cancel',
+//       }).then(result => {
+//         if (result.isConfirmed) {
+//           archive_permission(item)
+//           Swal.fire('Archived successfully!')
+//         }
+//       })
+// }
 
 async function deletePermission(item: any) {
     Swal.fire({
@@ -129,9 +129,6 @@ async function deletePermission(item: any) {
           "Are you sure you want to delete permission" +
           ' ' +
           item.name.split('.')[0] +
-          '(' +
-          item.name.split('.')[1] +
-          ')' +
           ' ' +
           '?',
         cancelButtonColor: '#d33',
@@ -159,22 +156,23 @@ async function list_permissions() {
   await get_permissions();
 }
 
-// function resetPermission(item) {
-//               Swal.fire({
-//                   title:"Are you sure you want to reset permission" +'\n'  + item.name.split('.')[0]+ " ( "+item.name.split('.')[1]+" )" + ' ' + '?',
-//                   showCancelButton: true,
-//                   cancelButtonColor: '#d33',
-//                   confirmButtonColor: '#3085d6',
-//                   confirmButtonText: this.$t('Permissions.MsgButtonRestore'),
-//                   cancelButtonText: this.$t('Permissions.Cancel') ,
-//               }).then((result) => {
-//                   if (result.isConfirmed) {
-//                       this.resetpermission(item);
-//                       this.AllpermissionsArchived();
-//                       Swal.fire( this.$t('Permissions.Msg')+" !", '', 'success')
-//                   }
-//               })
-//           },
+async function resetPermission(item :any) {
+        Swal.fire({
+          title:'Reset permission ? \n',
+          cancelButtonColor: '#d33',
+          confirmButtonColor: '#3085d6',
+          showCancelButton: true,
+          confirmButtonText:'Reset',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            reset_permission(item)
+            get_archived_permissions()
+            Swal.fire('Reset permission sucess !')
+          }
+        })
+  }
+
 
 </script>
 
@@ -271,18 +269,18 @@ async function list_permissions() {
           </VBtn>
         </template>
       </VTooltip>
-      <VTooltip :text="'archive'" location="bottom" v-if="archive=== false">
+      <!-- <VTooltip :text="'archive'" location="bottom" v-if="archive=== false">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
             @click="archivePermission(activity.data)">
             <VIcon size="24" icon="mdi-account-cancel" />
           </VBtn>
         </template>
-      </VTooltip>
+      </VTooltip> -->
       <VTooltip :text="'unarchive'" location="bottom" v-if="archive=== true">
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mr-1" variant="outlined" color="primary" size="small"
-            @click="reset_permission_with_permissions(activity.data)">
+            @click="resetPermission(activity.data)">
             <VIcon size="24" icon="mdi-account-reactivate" />
           </VBtn>
         </template>

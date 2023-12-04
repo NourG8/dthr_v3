@@ -105,6 +105,28 @@ export const useUserApi = createSharedComposable(() => {
     }
   }
 
+  async function check_user_cin(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-cin`, { "cin": payload })
+
+      return data
+    }
+    finally {
+
+    }
+  }
+
+  async function check_user_passport(payload: any) {
+    try {
+      const { data } = await api.post<any>(`users/check-passport`, { "num_passport": payload })
+
+      return data
+    }
+    finally {
+
+    }
+  }
+
   async function store_user(payload: any) {
     loading.value = true
     try {
@@ -469,6 +491,8 @@ export const useUserApi = createSharedComposable(() => {
     check_user_email,
     check_user_phone,
     check_user_email_prof,
-    check_user_phone_emergency
+    check_user_phone_emergency,
+    check_user_passport,
+    check_user_cin
   } as const
 })
